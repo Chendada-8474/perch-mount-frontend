@@ -3,10 +3,34 @@ import { ref } from 'vue';
 
 import AppMenuItem from './AppMenuItem.vue';
 
+import { getProjects } from '@/service/projects'
+
+
 const model = ref([
     {
         label: 'Home',
         items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' }]
+    },
+    {
+        label: '計畫',
+        items: []
+    },
+    {
+        label: '辨識',
+        items: [
+            { label: '待辨識棲架', icon: 'pi pi-fw pi-eye' },
+            { label: '來點空拍檢查', icon: 'pi pi-fw pi-check-square' },
+            { label: '來點檢視物種', icon: 'pi pi-fw pi-pencil' },
+        ]
+    },
+    {
+        label: '選項',
+        items: [
+            { label: '成員', icon: 'pi pi-fw pi-user', to: '/members' },
+            { label: '行為', icon: 'pi pi-fw pi-thumbs-up', to: '/behaviors' },
+            { label: '相機', icon: 'pi pi-fw pi-camera', to: '/cameras' },
+            { label: '物種', icon: 'pi pi-fw pi-align-left', to: '/species' },
+        ]
     },
     {
         label: 'UI Components',
@@ -168,6 +192,20 @@ const model = ref([
         ]
     }
 ]);
+
+
+getProjects().then((data) => {
+    for (var project of data.projects) {
+        model.value[1].items.push(
+            {
+                label: project.name,
+                icon: 'pi pi-fw pi-flag',
+                to: `/projects/${project.project_id}`,
+            }
+        )
+    }
+})
+
 </script>
 
 <template>

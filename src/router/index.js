@@ -9,6 +9,46 @@ const router = createRouter({
             component: AppLayout,
             children: [
                 {
+                    path: '/projects',
+                    children: [
+                        {
+                            path: '/projects/:project_id(\\d+)',
+                            name: 'project',
+                            component: () => import('@/views/pagesdev/Project.vue'),
+                        },
+                    ]
+                },
+                {
+                    path: '/projects/:id(\\d+)/perch_mounts',
+                    children: [
+                        {
+                            path: '/projects/:project_id(\\d+)/perch_mounts/:perch_mount_id(\\d+)',
+                            name: 'perch_mount',
+                            component: () => import('@/views/pagesdev/PerchMount.vue')
+                        }
+                    ]
+                },
+                {
+                    path: '/members',
+                    component: () => import('@/views/pagesdev/Members.vue'),
+
+                },
+                {
+                    path: '/species',
+                    component: () => import('@/views/pagesdev/Species.vue'),
+
+                },
+                {
+                    path: '/cameras',
+                    component: () => import('@/views/pagesdev/Cameras.vue'),
+
+                },
+                {
+                    path: '/behaviors',
+                    component: () => import('@/views/pagesdev/Behaviors.vue'),
+
+                },
+                {
                     path: '/',
                     name: 'dashboard',
                     component: () => import('@/views/Dashboard.vue')
@@ -168,7 +208,12 @@ const router = createRouter({
             path: '/auth/error',
             name: 'error',
             component: () => import('@/views/pages/auth/Error.vue')
-        }
+        },
+        {
+            path: '/:pathMatch(.*)*',
+            name: 'NotFound',
+            component: import('@/views/pages/NotFound.vue')
+        },
     ]
 });
 
