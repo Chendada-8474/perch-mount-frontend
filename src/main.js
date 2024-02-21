@@ -102,7 +102,10 @@ import VirtualScroller from 'primevue/virtualscroller';
 
 import BlockViewer from '@/components/BlockViewer.vue';
 
+import OpenLayersMap from "vue3-openlayers";
+
 import '@/assets/styles.scss';
+import "vue3-openlayers/styles.css";
 
 const app = createApp(App);
 
@@ -111,6 +114,8 @@ app.use(PrimeVue, { ripple: true });
 app.use(ToastService);
 app.use(DialogService);
 app.use(ConfirmationService);
+
+app.use(OpenLayersMap);
 
 app.directive('tooltip', Tooltip);
 app.directive('badge', BadgeDirective);
@@ -208,5 +213,6 @@ app.component('TreeSelect', TreeSelect);
 app.component('TreeTable', TreeTable);
 app.component('TriStateCheckbox', TriStateCheckbox);
 app.component('VirtualScroller', VirtualScroller);
+
 
 app.mount('#app');

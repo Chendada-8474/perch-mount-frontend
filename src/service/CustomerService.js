@@ -1,3 +1,9 @@
+export function getCustomersMedium() {
+    return fetch('demo/data/customers-medium.json')
+        .then((res) => res.json())
+        .then((d) => d.data);
+}
+
 export default class CustomerService {
     getCustomersSmall() {
         return fetch('demo/data/customers-small.json')

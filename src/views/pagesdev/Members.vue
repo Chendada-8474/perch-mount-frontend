@@ -8,16 +8,19 @@
                     {{ data.last_name }}{{ data.first_name }}
                 </template>
             </Column>
-            <Column field="is_admin" header="管理員"></Column>
+            <Column field="is_admin" header="管理員">
+                <template #body="{ data }">
+                    <i class="pi" :class="{ 'pi-check-circle text-green-500': data.is_admin }"></i>
+                </template>
+            </Column>
         </DataTable>
     </div>
 </template>
 
 <script setup>
-import { ref, onBeforeMount } from 'vue';
+import { ref } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import { FilterMatchMode } from 'primevue/api';
 
 import { getMembers } from '../../service/Members'
 

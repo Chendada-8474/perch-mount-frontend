@@ -16,11 +16,12 @@ const model = ref([
         items: []
     },
     {
-        label: '辨識',
+        label: '影像',
         items: [
             { label: '待辨識棲架', icon: 'pi pi-fw pi-eye' },
             { label: '來點空拍檢查', icon: 'pi pi-fw pi-check-square' },
             { label: '來點檢視物種', icon: 'pi pi-fw pi-pencil' },
+            { label: '精選', icon: 'pi pi-fw pi-star' },
         ]
     },
     {
