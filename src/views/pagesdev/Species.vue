@@ -51,7 +51,7 @@ const species = ref(null)
 
 onBeforeMount(() => {
     getSpecies().then((data) => {
-        species.value = data
+        species.value = data.species
     })
 })
 
@@ -59,7 +59,6 @@ const filters = ref({
     chinese_common_name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
     english_common_name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
     scientific_name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    category: { value: null, matchMode: FilterMatchMode.IN },
 });
 
 

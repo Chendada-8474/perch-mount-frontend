@@ -1,5 +1,5 @@
 <template>
-    <ol-map :loadTilesWhileAnimating="true" :loadTilesWhileInteracting="true" style="height: 100%; border-radius: 10px;">
+    <ol-map :loadTilesWhileAnimating="true" :loadTilesWhileInteracting="true" style="height: 100%;">
         <ol-view ref="view" :center="center" :zoom="zoom" projection="EPSG:4326" />
 
         <ol-tile-layer>
@@ -31,3 +31,9 @@ const props = defineProps({
 
 })
 </script>
+
+<style>
+canvas {
+    border-radius: 0.375rem !important;
+}
+</style>

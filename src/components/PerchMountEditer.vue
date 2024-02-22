@@ -4,39 +4,41 @@
             <span class="p-text-secondary block mb-5">編輯棲架資訊</span>
             <div class="flex align-items-center gap-3 mb-3">
                 <label for="latitude" class="font-semibold w-6rem">緯度</label>
-                <InputNumber id="latitude" :modelValue="latitude" inputId="minmaxfraction" :minFractionDigits="3"
-                    :maxFractionDigits="6" />
+                <InputNumber id="latitude" v-model="perchMountEditer.latitude" @focusout="editorChanged"
+                    inputId="minmaxfraction" :minFractionDigits="3" :maxFractionDigits="6" class="w-full" />
             </div>
-            <div class="flex align-items-center gap-3 mb-2">
+            <div class="flex align-items-center gap-3 mb-3">
                 <label for="longitude" class="font-semibold w-6rem">經度</label>
-                <InputNumber id="longitude" :modelValue="longitude" inputId="minmaxfraction" :minFractionDigits="3"
-                    :maxFractionDigits="6" />
+                <InputNumber id="longitude" v-model="perchMountEditer.longitude" @focusout="editorChanged"
+                    inputId="minmaxfraction" :minFractionDigits="3" :maxFractionDigits="6" class="w-full" />
             </div>
             <div class="flex align-items-center gap-3 mb-3">
                 <label for="project" class="font-semibold w-6rem">計畫</label>
-                <Dropdown id="project" :modelValue="project" :options="projectOptions" optionLabel="name" optionValue="code"
-                    placeholder="Select a Project" class="w-full md:w-14rem" />
+                <Dropdown id="project" v-model="perchMountEditer.project" @change="editorChanged" :options="projectOptions"
+                    optionLabel="name" optionValue="code" placeholder="Select a Project" class="w-full" />
             </div>
             <div class="flex align-items-center gap-3 mb-3">
                 <label for="habitat" class="font-semibold w-6rem">棲地</label>
-                <Dropdown id="habitat" :modelValue="habitat" :options="habitatOptions" optionLabel="name" optionValue="code"
-                    placeholder="Select a Habitat" class="w-full md:w-14rem" />
+                <Dropdown id="habitat" v-model="perchMountEditer.habitat" @change="editorChanged" :options="habitatOptions"
+                    optionLabel="name" optionValue="code" placeholder="Select a Habitat" class="w-full" />
             </div>
             <div class="flex align-items-center gap-3 mb-3">
                 <label for="layer" class="font-semibold w-6rem">分層</label>
-                <Dropdown id="layer" :modelValue="layer" :options="layerOptions" optionLabel="name" optionValue="code"
-                    placeholder="Select a Habitat" class="w-full md:w-14rem" />
+                <Dropdown id="layer" v-model="perchMountEditer.layer" @change="editorChanged" :options="layerOptions"
+                    optionLabel="name" optionValue="code" placeholder="Select a Habitat" class="w-full" />
             </div>
             <div class="flex align-items-center gap-3 mb-3">
                 <label for="claim_by" class="font-semibold w-6rem">指派認領</label>
-                <Dropdown id="claim_by" :modelValue="claimBy" :options="memberOptions" optionLabel="name" optionValue="code"
-                    placeholder="Select a Member" class="w-full md:w-14rem" />
+                <Dropdown id="claim_by" v-model="perchMountEditer.claimBy" @change="editorChanged" :options="memberOptions"
+                    optionLabel="name" optionValue="code" placeholder="Select a Member" class="w-full" />
             </div>
         </div>
         <div class="col-12 md:col-6">
             <Location :center="[longitude, latitude]" :point="[longitude, latitude]">
             </Location>
         </div>
+
+
     </div>
 </template>
 
@@ -55,6 +57,7 @@ const habitatOptions = ref()
 const projectOptions = ref()
 const memberOptions = ref()
 const layerOptions = ref()
+const perchMountEditer = ref({})
 
 const props = defineProps({
     latitude: { type: Number, default: 22.645327 },
@@ -65,6 +68,21 @@ const props = defineProps({
     claimBy: { type: Number, default: null },
 
 })
+
+perchMountEditer.value.latitude = props.latitude
+perchMountEditer.value.longitude = props.longitude
+perchMountEditer.value.project = props.project
+perchMountEditer.value.habitat = props.habitat
+perchMountEditer.value.layer = props.layer
+perchMountEditer.value.claimBy = props.claimBy
+
+
+const emit = defineEmits()
+
+
+function editorChanged() {
+    emit('editorChanged', perchMountEditer.value)
+}
 
 
 getProjects().then((data) => {

@@ -27,7 +27,7 @@ import { getMembers } from '../../service/Members'
 const members = ref(null)
 
 getMembers().then((data) => {
-    members.value = data
+    members.value = data.members
 })
 
 </script>
