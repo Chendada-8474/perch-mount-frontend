@@ -1,21 +1,88 @@
 <template>
     <Breadcrumb :home="breadcrumbHome" :model="breadcrumbItems" class="mb-4" />
     <div className="card">
-        <h5>{{ perchMount.perch_mount_name }}</h5>
+        <div class="flex justify-content-between flex-wrap mb-4">
+            <div>
+                <h5>{{ perchMount.perch_mount_name }}</h5>
+                <div class="flex flex-row flex-wrap">
+                    <Tag class="mr-2" icon="pi pi-info-circle" v-if="perchMount.is_priority" severity="danger" rounded>
+                        優先處裡
+                    </Tag>
+                    <Tag class="mr-2" icon="pi pi-user" v-if="perchMount.claim_by" rounded>
+                        {{ member.first_name }}
+                    </Tag>
+                    <Tag class="mr-2" icon="pi pi-sun" severity="info" rounded>
+                        {{ habitat.chinese_name }}
+                    </Tag>
+                    <Tag class="mr-2" icon="pi pi-times" severity="contrast" v-if="perchMount.terminated" rounded>
+                        已撤收
+                    </Tag>
+                </div>
+
+            </div>
+            <div class="flex flex-row flex-wrap">
+                <Button label="去檢查空拍" severity="success" icon="pi pi-eye" class="p-button-rounded p-button-sm m-2" />
+                <Button label="去檢視物種" severity="success" icon="pi pi-search" class="p-button-rounded p-button-sm m-2" />
+                <Button label="編輯棲架" severity="secondary" icon="pi pi-pencil" class="p-button-rounded p-button-sm m-2"
+                    @click="perchMountEditVisible = true" />
+                <Button label="認領" severity="warning" icon="pi pi-check" class="p-button-rounded p-button-sm  m-2"
+                    @click="claim" />
+            </div>
+        </div>
         <div class="grid">
             <div class="col-12 md:col-6">
-                <p>Use this page to start from scratch and place your custom content.</p>
+                <div class="grid m-4">
+                    <div class="col-12 md:col-4">
+                        <Card>
+                            <template #title>待空拍檢查檔案</template>
+                            <template #content>
+                                <p class="m-0">
+                                    401
+                                </p>
+                            </template>
+                        </Card>
+                    </div>
+                    <div class="col-12 md:col-4">
+                        <Card>
+                            <template #title>待物種檢視檔案</template>
+                            <template #content>
+                                <p class="m-0">
+                                    4687
+                                </p>
+                            </template>
+                        </Card>
+                    </div>
+                    <div class="col-12 md:col-4">
+                        <Card>
+                            <template #title>完成率</template>
+                            <template #content>
+                                <p class="m-0">
+                                    68.1 %
+                                </p>
+                            </template>
+                        </Card>
+                    </div>
+                </div>
+
+                <p><span class="font-bold">棲架編號</span>：{{ perchMount.perch_mount_id }}</p>
+                <p><span class="font-bold">座標</span>
+                    <a :href="`https://www.google.com/maps/search/?api=1&query=${perchMount.latitude}%2C${perchMount.longitude}`"
+                        target="_blank">
+                        ：{{ perchMount.latitude }}, {{ perchMount.longitude }}
+                    </a>
+                </p>
+                <p><span class="font-bold">認領人</span>：{{ member.first_name }}</p>
+                <p><span class="font-bold">計畫</span>：{{ project.name }}</p>
+                <p><span class="font-bold">最後一次備註</span>：{{ perchMount.latest_note }}</p>
             </div>
 
             <div class="col-12 md:col-6">
                 <Location :center="[perchMount.longitude, perchMount.latitude]"
-                    :point="[perchMount.longitude, perchMount.latitude]" style="height: 15rem;">
+                    :point="[perchMount.longitude, perchMount.latitude]" style="height: 100%;">
                 </Location>
             </div>
 
         </div>
-
-
     </div>
 
 
@@ -24,9 +91,13 @@
         <h5>Sections</h5>
         <DataTable :value="sections" v-model:expandedRows="expandedRows" dataKey="section_id" responsiveLayout="scroll">
             <Column :expander="true" headerStyle="min-width: 3rem" />
+            <Column field="section_id" header="Section ID"></Column>
             <Column field="check_date" header="Name" :sortable="true">
                 <template #body="slotProps">
-                    {{ slotProps.data.check_date }}
+                    <router-link :to="sectionUrl(perchMount.project, perchMount.perch_mount_id, slotProps.data.section_id)"
+                        rel="noopener">
+                        <a href="">{{ slotProps.data.check_date }}</a>
+                    </router-link>
                 </template>
             </Column>
             <Column header="空拍檢查" :sortable="true">
@@ -74,23 +145,46 @@
             </template>
         </DataTable>
     </div>
+
+
+
+    <Dialog v-model:visible="perchMountEditVisible" modal header="Edit Profile" :style="{ width: '50rem' }">
+        <template #header>
+            <div class="inline-flex align-items-center justify-content-center gap-2">
+                <span class="font-bold white-space-nowrap">{{ perchMount.perch_mount_name }}</span>
+            </div>
+        </template>
+
+        <PerchMountEditer @changed="editorChanged" :perchMountID="perchMount.perch_mount_id">
+        </PerchMountEditer>
+
+        <template #footer>
+            <Button label="Cancel" severity="secondary" @click="perchMountEditVisible = false" autofocus />
+            <Button label="Save" severity="primary" @click="updatePerchMount" autofocus />
+        </template>
+    </Dialog>
+
+    <Toast />
 </template>
 
 
 <script setup>
 import { ref, onBeforeMount, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useToast } from 'primevue/usetoast';
 import Location from '../../components/Location.vue'
+import PerchMountEditer from '../../components/PerchMountEditer.vue'
 
 import { getPerchMountByID } from '../../service/PerchMounts'
 import { getSections } from '../../service/Sections'
 
 const route = useRoute()
+const toast = useToast()
 
 const perchMount = ref({})
 const project = ref({})
 const habitat = ref({})
-const members = ref({})
+const member = ref({})
 const breadcrumbHome = ref({});
 const breadcrumbItems = ref([]);
 
@@ -101,7 +195,7 @@ const mountTypes = ref({})
 
 const expandedRows = ref([]);
 
-
+const perchMountEditVisible = ref(false)
 
 onBeforeMount(() => {
     getPerchMountByID(route.params.perch_mount_id).then((data) => {
@@ -129,7 +223,7 @@ function findPerchMount(data) {
     perchMount.value = data.perch_mounts
     project.value = data.projects
     habitat.value = data.habitats
-    members.value = data.members
+    member.value = data.members
     breadcrumbItems.value = [
         { label: project.value.name, to: `/projects/${project.value.project_id}` },
         { label: perchMount.value.perch_mount_name, to: `/projects/${project.value.project_id}/perch_mounts/${perchMount.value.perch_mount_id}` },
@@ -143,5 +237,21 @@ function findSection(data) {
     mountTypes.value = data.mount_types
 }
 
+function updatePerchMount() {
+    perchMountEditVisible.value = false
+    toast.add({ severity: 'success', summary: '棲架變更成功', detail: perchMount.value.perch_mount_name, life: 3000 });
+}
+
+function claim() {
+    toast.add({ severity: 'success', summary: '認領成功', detail: perchMount.value.perch_mount_name, life: 3000 });
+}
+
+function editorChanged(updatedPerchMount) {
+    console.log(updatedPerchMount)
+}
+
+function sectionUrl(project, perchMount, sectionID) {
+    return `/projects/${project}/perch_mounts/${perchMount}/sections/${sectionID}`
+}
 
 </script>

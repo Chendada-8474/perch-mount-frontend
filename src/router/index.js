@@ -29,6 +29,16 @@ const router = createRouter({
                     ]
                 },
                 {
+                    path: '/projects/:project_id(\\d+)/perch_mounts/:perch_mount_id(\\d+)',
+                    children: [
+                        {
+                            path: '/projects/:project_id(\\d+)/perch_mounts/:perch_mount_id(\\d+)/sections/:section_id(\\d+)',
+                            name: 'section',
+                            component: () => import('@/views/pagesdev/Section.vue')
+                        }
+                    ]
+                },
+                {
                     path: '/members',
                     component: () => import('@/views/pagesdev/Members.vue'),
 

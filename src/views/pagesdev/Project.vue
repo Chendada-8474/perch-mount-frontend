@@ -63,6 +63,7 @@
         </div>
     </div>
 
+
     <Dialog v-model:visible="perchMountEditor.visible" modal header="Edit Profile" :style="{ width: '50rem' }">
         <template #header>
             <div class="inline-flex align-items-center justify-content-center gap-2">
@@ -70,9 +71,7 @@
             </div>
         </template>
 
-        <PerchMountEditer @editor-changed="editorChanged" :latitude="perchMountEditor.latitude"
-            :longitude="perchMountEditor.longitude" :project="perchMountEditor.project" :habitat="perchMountEditor.habitat"
-            :layer="perchMountEditor.layer" :claimBy="perchMountEditor.claimBy">
+        <PerchMountEditer @changed="editorChanged" :perchMountID="perchMountEditor.perchMountID">
         </PerchMountEditer>
 
         <template #footer>
@@ -90,7 +89,7 @@ import { useRoute } from 'vue-router'
 import { useToast } from 'primevue/usetoast';
 import PerchMountEditer from '../../components/PerchMountEditer.vue'
 
-import { getPerchMounts, getPerchMountByID } from '../../service/PerchMounts'
+import { getPerchMounts } from '../../service/PerchMounts'
 import { getProjectByID } from '../../service/Projects'
 
 const route = useRoute()
@@ -143,31 +142,14 @@ function findBreadcrumb(data) {
 const perchMountEditor = ref(
     {
         visible: false,
-        perchMountName: "",
-        longitude: null,
-        latitude: null,
-        habitat: null,
-        project: null,
-        layer: null,
-        claimBy: null,
-        isPriority: null
+        perchMountID: null,
     }
 )
 
 
-
 function showPerchMountEditor(perchMountID) {
-    getPerchMountByID(perchMountID).then((data) => {
-        perchMountEditor.value.visible = true
-        perchMountEditor.value.perchMountName = data.perch_mounts.perch_mount_name
-        perchMountEditor.value.longitude = data.perch_mounts.longitude
-        perchMountEditor.value.latitude = data.perch_mounts.latitude
-        perchMountEditor.value.project = data.perch_mounts.project
-        perchMountEditor.value.layer = data.perch_mounts.layer
-        perchMountEditor.value.habitat = data.perch_mounts.habitat
-        perchMountEditor.value.claimBy = data.perch_mounts.claim_by
-        perchMountEditor.value.isPriority = data.perch_mounts.is_priority
-    })
+    perchMountEditor.value.visible = true
+    perchMountEditor.value.perchMountID = perchMountID
 }
 
 function updatePerchMount() {

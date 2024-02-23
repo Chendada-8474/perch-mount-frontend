@@ -24,3 +24,11 @@ export function getSections(perchMount = null, checkDateFrom = null, checkDateTo
         .then((res) => res.json())
         .then((d) => d);
 }
+
+export function getSectionByID(sectionID) {
+    var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/sections/${sectionID}`)
+    return fetch(endPoint.href)
+        .then((res) => res.json())
+        .then((d) => d);
+
+}
