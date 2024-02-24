@@ -20,7 +20,7 @@ export function getDetectedMedia(perchMountID = null, sectionID = null, offset =
     }
 
     endPoint.search = params
-
+    console.log(endPoint.href)
     return fetch(endPoint.href)
         .then((res) => res.json())
         .then((d) => d);
