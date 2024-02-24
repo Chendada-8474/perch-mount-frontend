@@ -97,7 +97,7 @@
 
         <template #footer>
             <Button label="Cancel" severity="secondary" @click="newPerchMount.visible = false" autofocus />
-            <Button label="Add" severity="primary" @click="addPerchMount" autofocus />
+            <Button label="Add" severity="primary" @click="addPerchMountClicked" autofocus />
         </template>
     </Dialog>
 
@@ -111,7 +111,7 @@ import { useToast } from 'primevue/usetoast';
 import PerchMountEditer from '../../components/PerchMountEditer.vue'
 import NewPerchMountEditer from '../../components/NewPerchMountEditer.vue'
 
-import { getPerchMounts, updatePerchMount } from '../../service/PerchMounts'
+import { getPerchMounts, updatePerchMount, addPerchMount } from '../../service/PerchMounts'
 import { getProjectByID } from '../../service/Projects'
 
 const route = useRoute()
@@ -161,6 +161,12 @@ function findBreadcrumb(data) {
 
 }
 
+function refresh() {
+    getPerchMounts(route.params.project_id).then((data) => {
+        findResources(data)
+    })
+}
+
 const perchMountEditor = ref(
     {
         visible: false,
@@ -195,8 +201,8 @@ function updatePerchMountClicked() {
         claim_by: perchMountEditor.value.claimBy,
     })
         .then((data) => {
-            console.log(data)
             toast.add({ severity: 'success', summary: '棲架變更成功', detail: perchMountEditor.value.perchMountName, life: 3000 })
+            refresh()
         })
         .catch((e) => {
             toast.add({ severity: 'error', summary: '棲架變更失敗', detail: e, life: 3000 })
@@ -239,19 +245,34 @@ function newPerchMountChanged(emitedNewPerchMount) {
     newPerchMount.value.layer = emitedNewPerchMount.layer
 }
 
-function addPerchMount() {
-    console.log(isNewPerchMountValid())
+function addPerchMountClicked() {
+
     if (!isNewPerchMountValid()) {
         toast.add({ severity: 'warn', summary: '新增失敗', detail: '棲架資料沒填完欸', life: 3000 });
         return
     }
     newPerchMount.value.visible = false
-    toast.add({ severity: 'success', summary: '新增成功', detail: newPerchMount.value.perchMountName, life: 3000 });
+    addPerchMount({
+        perch_mount_name: newPerchMount.value.perchMountName,
+        latitude: newPerchMount.value.latitude,
+        longitude: newPerchMount.value.longitude,
+        project: newPerchMount.value.project,
+        habitat: newPerchMount.value.habitat,
+        layer: newPerchMount.value.layer,
+    }).then((data) => {
+        toast.add({ severity: 'success', summary: '棲架新增成功', detail: newPerchMount.value.perchMountName, life: 3000 })
+        refresh()
+    }).catch((e) => {
+        toast.add({ severity: 'error', summary: '棲架新增失敗', detail: e, life: 3000 })
+    })
 }
 
 function isNewPerchMountValid() {
     return !(!newPerchMount.value.perchMountName || !newPerchMount.value.latitude || !newPerchMount.value.longitude || !newPerchMount.value.habitat)
 }
+
+
+
 
 </script>
 
