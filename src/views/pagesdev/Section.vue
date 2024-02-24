@@ -2,7 +2,26 @@
     <Breadcrumb :home="breadcrumbHome" :model="breadcrumbItems" class="mb-4" />
     <div className="card">
         <h5>Section {{ section.check_date }}</h5>
-        <p>Use this page to start from scratch and place your custom content.</p>
+        <div class="grid">
+            <div class="col-12 md:col-4">
+                <p><span class="font-bold">Section ID：</span>{{ section.section_id }}</p>
+                <p><span class="font-bold">計畫：</span>{{ project.name }}</p>
+                <p><span class="font-bold">棲架：</span>{{ perchMount.perch_mount_name }}</p>
+            </div>
+            <div class="col-12 md:col-4">
+                <p><span class="font-bold">回收日期：</span>{{ section.check_date }}</p>
+                <p><span class="font-bold">工作開始時間：</span>{{ section.start_time }}</p>
+                <p><span class="font-bold">工作結束時間：</span>{{ section.end_time }}</p>
+            </div>
+            <div class="col-12 md:col-4">
+                <p><span class="font-bold">相機：</span>{{ camera.model_name }}</p>
+                <p>
+                    <span class="font-bold">回收人員：</span>
+                    {{ memberStringList(section.operators, "first_name") }}
+                </p>
+                <p><span class="font-bold">備註：</span>{{ section.note }}</p>
+            </div>
+        </div>
     </div>
     <div class="card">
         <h5>影像</h5>
@@ -19,7 +38,15 @@
                         <span class="vertical-align-middle ml-2 font-bold line-height-3">{{
                             slotProps.data.medium_date }}</span>
                     </template>
-                    <Column field="detected_medium_id" header="Medium ID"></Column>
+                    <Column field="detected_medium_id" header="Medium ID">
+                        <template #body="slotProps">
+                            <router-link
+                                :to="detectedMediumUrl(perchMount.project, perchMount.perch_mount_id, slotProps.data.section, slotProps.data.detected_medium_id)"
+                                rel="noopener">
+                                {{ slotProps.data.detected_medium_id }}
+                            </router-link>
+                        </template>
+                    </Column>
                     <Column field="medium_datetime" header="拍攝時間"></Column>
                 </DataTable>
             </TabPanel>
@@ -39,7 +66,7 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount } from 'vue'
+import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import moment from 'moment'
 
@@ -56,38 +83,57 @@ const breadcrumbItems = ref([])
 const project = ref({})
 const perchMount = ref({})
 const section = ref({})
+const camera = ref({})
 
 const detectedMedia = ref([])
 const expandedRowGroups = ref()
 
-onBeforeMount(() => {
-    breadcrumbHome.value = { icon: 'pi pi-home', to: '/' }
-    const projectUrl = `/projects/${route.params.project_id}`
-    const perchMountUrl = `${projectUrl}/perch_mounts/${route.params.perch_mount_id}`
-    const sectionUrl = `${perchMountUrl}/sections/${route.params.section_id}`
-    breadcrumbItems.value = [
-        { label: null, to: projectUrl },
-        { label: null, to: perchMountUrl },
-        { label: null, to: sectionUrl },
-    ]
+breadcrumbHome.value = { icon: 'pi pi-home', to: '/' }
+const projectUrl = `/projects/${route.params.project_id}`
+const perchMountUrl = `${projectUrl}/perch_mounts/${route.params.perch_mount_id}`
+const sectionUrl = `${perchMountUrl}/sections/${route.params.section_id}`
+breadcrumbItems.value = [
+    { label: null, to: projectUrl },
+    { label: null, to: perchMountUrl },
+    { label: null, to: sectionUrl },
+]
 
-    getProjectByID(route.params.project_id).then((data) => {
-        project.value = data
-        breadcrumbItems.value[0].label = data.name
-    })
-    getPerchMountByID(route.params.perch_mount_id).then((data) => {
-        perchMount.value = data
-        breadcrumbItems.value[1].label = data.perch_mounts.perch_mount_name
-    })
-    getSectionByID(route.params.section_id).then((data) => {
-        section.value = data
-        breadcrumbItems.value[2].label = data.check_date
-    })
-    getDetectedMedia(null, route.params.section_id, null, 20000).then((data) => {
-        detectedMedia.value = data.media
-        for (var medium of detectedMedia.value) {
-            medium.medium_date = moment(medium.medium_datetime).format("YYYY-MM-DD")
-        }
-    })
+getProjectByID(route.params.project_id).then((data) => {
+    project.value = data
+    breadcrumbItems.value[0].label = data.name
 })
+getPerchMountByID(route.params.perch_mount_id).then((data) => {
+    perchMount.value = data.perch_mounts
+    breadcrumbItems.value[1].label = data.perch_mounts.perch_mount_name
+})
+getSectionByID(route.params.section_id).then((data) => {
+    section.value = data
+    camera.value = data.camera
+    breadcrumbItems.value[2].label = data.check_date
+})
+getDetectedMedia(null, route.params.section_id, null, 20000).then((data) => {
+    detectedMedia.value = data.media
+    for (var medium of detectedMedia.value) {
+        medium.medium_date = moment(medium.medium_datetime).format("YYYY-MM-DD")
+    }
+})
+
+
+const memberStringList = (operators, field) => {
+    if (!operators) {
+        return ""
+    }
+    var members = []
+    for (const [memberID, operator] of Object.entries(operators)) {
+        members.push(operator[field])
+    }
+    return members.join(", ")
+}
+
+
+function detectedMediumUrl(project, perchMount, sectionID, detectedMediumID) {
+    return `/projects/${project}/perch_mounts/${perchMount}/sections/${sectionID}/detected_media/${detectedMediumID}`
+}
+
+
 </script>

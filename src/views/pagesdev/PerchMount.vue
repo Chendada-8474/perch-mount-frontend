@@ -1,9 +1,13 @@
 <template>
     <Breadcrumb :home="breadcrumbHome" :model="breadcrumbItems" class="mb-4" />
     <div className="card">
+        <ProgressBar :value="50" class="mb-4" style="height: 1rem"></ProgressBar>
+
         <div class="flex justify-content-between flex-wrap mb-4">
             <div>
+
                 <h5>{{ perchMount.perch_mount_name }}</h5>
+
                 <div class="flex flex-row flex-wrap">
                     <Tag class="mr-2" icon="pi pi-info-circle" v-if="perchMount.is_priority" severity="danger" rounded>
                         優先處裡
@@ -20,6 +24,7 @@
                 </div>
 
             </div>
+
             <div class="flex flex-row flex-wrap">
                 <Button label="去檢查空拍" severity="success" icon="pi pi-eye" class="p-button-rounded p-button-sm m-2" />
                 <Button label="去檢視物種" severity="success" icon="pi pi-search" class="p-button-rounded p-button-sm m-2" />
@@ -29,10 +34,13 @@
                     @click="claim" />
             </div>
         </div>
+
         <div class="grid">
+
             <div class="col-12 md:col-6">
                 <div class="grid m-4">
-                    <div class="col-12 md:col-4">
+
+                    <div class="col-12 md:col-6">
                         <Card>
                             <template #title>待空拍檢查檔案</template>
                             <template #content>
@@ -42,7 +50,7 @@
                             </template>
                         </Card>
                     </div>
-                    <div class="col-12 md:col-4">
+                    <div class="col-12 md:col-6">
                         <Card>
                             <template #title>待物種檢視檔案</template>
                             <template #content>
@@ -52,17 +60,8 @@
                             </template>
                         </Card>
                     </div>
-                    <div class="col-12 md:col-4">
-                        <Card>
-                            <template #title>完成率</template>
-                            <template #content>
-                                <p class="m-0">
-                                    68.1 %
-                                </p>
-                            </template>
-                        </Card>
-                    </div>
                 </div>
+
 
                 <p><span class="font-bold">棲架編號</span>：{{ perchMount.perch_mount_id }}</p>
                 <p><span class="font-bold">座標</span>
@@ -96,7 +95,7 @@
                 <template #body="slotProps">
                     <router-link :to="sectionUrl(perchMount.project, perchMount.perch_mount_id, slotProps.data.section_id)"
                         rel="noopener">
-                        <a href="">{{ slotProps.data.check_date }}</a>
+                        {{ slotProps.data.check_date }}
                     </router-link>
                 </template>
             </Column>
@@ -255,3 +254,5 @@ function sectionUrl(project, perchMount, sectionID) {
 }
 
 </script>
+
+<style></style>

@@ -29,3 +29,22 @@ export function getPerchMountByID(perchMountID) {
         .then((res) => res.json())
         .then((d) => d);
 }
+
+export function updatePerchMount(perchMountID, data) {
+    var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/perch_mounts/${perchMountID}/`)
+
+    return fetch(endPoint.href, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+        headers: { "content-type": "application/json" },
+    })
+        .then((res) => {
+            if (res.ok) {
+                return res.json()
+            }
+            return res.text().then(errorMsg => {
+                throw new Error(errorMsg);
+            });
+        })
+        .then((d) => d)
+}

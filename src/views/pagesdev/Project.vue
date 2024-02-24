@@ -1,11 +1,15 @@
 <template>
     <Breadcrumb :home="breadcrumbHome" :model="breadcrumbItems" class="mb-4" />
     <div className="card">
-        <h5>棲架</h5>
+        <div class="flex justify-content-between flex-wrap mb-4">
+            <h5>棲架</h5>
+            <Button label="新增棲架" @click="newPerchMount.visible = true" icon="pi pi-plus"
+                class="p-button-rounded p-button-sm m-2" />
+        </div>
     </div>
     <div class="grid p-fluid mt-3">
         <div v-for="perchMount in workingPerchMounts" class="field col-12 md:col-3">
-            <Card>
+            <Card class="h-full">
 
                 <template #title>
                     <div class="flex justify-content-between flex-wrap">
@@ -27,15 +31,16 @@
                 </template>
 
                 <template #content>
-                    <p class="m-0">
+                    <div
+                        class="surface-overlay white-space-nowrap overflow-hidden text-overflow-ellipsis text-color-secondary">
                         {{ perchMount.latest_note }}
-                    </p>
+                    </div>
                 </template>
             </Card>
         </div>
 
         <div v-for="perchMount in terminatedPerchMounts" class="field col-12 md:col-3">
-            <Card>
+            <Card class="h-full">
                 <template #title>
                     <div class="flex justify-content-between flex-wrap">
                         <router-link :to="perchMountUrl(perchMount.project, perchMount.perch_mount_id)" rel="noopener"
@@ -55,9 +60,10 @@
                     </Tag>
                 </template>
                 <template #content>
-                    <p class=" m-0">
+                    <div
+                        class="surface-overlay white-space-nowrap overflow-hidden text-overflow-ellipsis text-color-secondary">
                         {{ perchMount.latest_note }}
-                    </p>
+                    </div>
                 </template>
             </Card>
         </div>
@@ -76,7 +82,22 @@
 
         <template #footer>
             <Button label="Cancel" severity="secondary" @click="perchMountEditor.visible = false" autofocus />
-            <Button label="Save" severity="primary" @click="updatePerchMount" autofocus />
+            <Button label="Save" severity="primary" @click="updatePerchMountClicked" autofocus />
+        </template>
+    </Dialog>
+
+    <Dialog v-model:visible="newPerchMount.visible" modal header="新增棲架" :style="{ width: '50rem' }">
+        <template #header>
+            <div class="inline-flex align-items-center justify-content-center gap-2">
+                <span class="font-bold white-space-nowrap">新增棲架</span>
+            </div>
+        </template>
+
+        <NewPerchMountEditer @changed="newPerchMountChanged"></NewPerchMountEditer>
+
+        <template #footer>
+            <Button label="Cancel" severity="secondary" @click="newPerchMount.visible = false" autofocus />
+            <Button label="Add" severity="primary" @click="addPerchMount" autofocus />
         </template>
     </Dialog>
 
@@ -88,8 +109,9 @@ import { ref, onBeforeMount, watch } from 'vue';
 import { useRoute } from 'vue-router'
 import { useToast } from 'primevue/usetoast';
 import PerchMountEditer from '../../components/PerchMountEditer.vue'
+import NewPerchMountEditer from '../../components/NewPerchMountEditer.vue'
 
-import { getPerchMounts } from '../../service/PerchMounts'
+import { getPerchMounts, updatePerchMount } from '../../service/PerchMounts'
 import { getProjectByID } from '../../service/Projects'
 
 const route = useRoute()
@@ -143,6 +165,12 @@ const perchMountEditor = ref(
     {
         visible: false,
         perchMountID: null,
+        latitude: null,
+        longitude: null,
+        project: null,
+        habitat: null,
+        layer: null,
+        claimBy: null,
     }
 )
 
@@ -152,9 +180,27 @@ function showPerchMountEditor(perchMountID) {
     perchMountEditor.value.perchMountID = perchMountID
 }
 
-function updatePerchMount() {
+function updatePerchMountClicked() {
+    if (!isPerchMountEditerValid()) {
+        toast.add({ severity: 'warn', summary: '新增失敗', detail: '棲架資料沒填完欸', life: 3000 });
+        return
+    }
     perchMountEditor.value.visible = false
-    toast.add({ severity: 'success', summary: '棲架變更成功', detail: perchMountEditor.value.perchMountName, life: 3000 });
+    updatePerchMount(perchMountEditor.value.perchMountID, {
+        latitude: perchMountEditor.value.latitude,
+        longitude: perchMountEditor.value.longitude,
+        project: perchMountEditor.value.project,
+        habitat: perchMountEditor.value.habitat,
+        layer: perchMountEditor.value.layer,
+        claim_by: perchMountEditor.value.claimBy,
+    })
+        .then((data) => {
+            console.log(data)
+            toast.add({ severity: 'success', summary: '棲架變更成功', detail: perchMountEditor.value.perchMountName, life: 3000 })
+        })
+        .catch((e) => {
+            toast.add({ severity: 'error', summary: '棲架變更失敗', detail: e, life: 3000 })
+        })
 }
 
 
@@ -162,8 +208,49 @@ const perchMountUrl = (project, perchMount) => {
     return `/projects/${project}/perch_mounts/${perchMount}`
 }
 
-function editorChanged(test) {
-    console.log(test)
+function editorChanged(changedPerchMount) {
+    perchMountEditor.value.latitude = changedPerchMount.latitude
+    perchMountEditor.value.longitude = changedPerchMount.longitude
+    perchMountEditor.value.project = changedPerchMount.project
+    perchMountEditor.value.habitat = changedPerchMount.habitat
+    perchMountEditor.value.layer = changedPerchMount.layer
+    perchMountEditor.value.claimBy = changedPerchMount.claimBy
+}
+
+function isPerchMountEditerValid() {
+    return !(!perchMountEditor.value.latitude || !perchMountEditor.value.longitude || !perchMountEditor.value.habitat || !perchMountEditor.value.project)
+}
+
+const newPerchMount = ref({
+    visible: false,
+    perchMountName: null,
+    latitude: null,
+    longitude: null,
+    project: route.params.project_id,
+    habitat: null,
+    layer: null,
+})
+
+function newPerchMountChanged(emitedNewPerchMount) {
+    newPerchMount.value.perchMountName = emitedNewPerchMount.perchMountName
+    newPerchMount.value.latitude = emitedNewPerchMount.latitude
+    newPerchMount.value.longitude = emitedNewPerchMount.longitude
+    newPerchMount.value.habitat = emitedNewPerchMount.habitat
+    newPerchMount.value.layer = emitedNewPerchMount.layer
+}
+
+function addPerchMount() {
+    console.log(isNewPerchMountValid())
+    if (!isNewPerchMountValid()) {
+        toast.add({ severity: 'warn', summary: '新增失敗', detail: '棲架資料沒填完欸', life: 3000 });
+        return
+    }
+    newPerchMount.value.visible = false
+    toast.add({ severity: 'success', summary: '新增成功', detail: newPerchMount.value.perchMountName, life: 3000 });
+}
+
+function isNewPerchMountValid() {
+    return !(!newPerchMount.value.perchMountName || !newPerchMount.value.latitude || !newPerchMount.value.longitude || !newPerchMount.value.habitat)
 }
 
 </script>

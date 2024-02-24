@@ -27,7 +27,7 @@
 const props = defineProps({
     center: { type: Array, default: [22.645327, 120.606588] },
     zoom: { type: Number, default: 12 },
-    point: { type: Array[Number], default: null },
+    point: { type: Array[Number], default: [22.645327, 120.606588] },
 
 })
 </script>
