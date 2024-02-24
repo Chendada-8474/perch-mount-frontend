@@ -45,7 +45,8 @@
                     <div class="flex justify-content-between flex-wrap">
                         <router-link :to="perchMountUrl(perchMount.project, perchMount.perch_mount_id)" rel="noopener"
                             class="">
-                            <Button :label="perchMount.perch_mount_name" class="p-button-lg p-button-secondary px-1" text />
+                            <Button :label="perchMount.perch_mount_name" class="p-button-lg p-button-secondary px-1 py-0"
+                                text />
                         </router-link>
 
                         <Button @click="showPerchMountEditor(perchMount.perch_mount_id)" icon="pi pi-pencil"

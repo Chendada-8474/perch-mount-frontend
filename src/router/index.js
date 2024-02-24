@@ -49,9 +49,12 @@ const router = createRouter({
                     ]
                 },
                 {
+                    path: '/review',
+                    component: () => import('@/views/pagesdev/Review.vue'),
+                },
+                {
                     path: '/members',
                     component: () => import('@/views/pagesdev/Members.vue'),
-
                 },
                 {
                     path: '/species',
