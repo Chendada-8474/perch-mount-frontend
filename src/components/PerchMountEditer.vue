@@ -64,7 +64,6 @@ const perchMountEditer = ref({})
 
 
 const props = defineProps({
-    visible: { type: Boolean, default: false },
     perchMountID: { type: Number, default: null },
 })
 

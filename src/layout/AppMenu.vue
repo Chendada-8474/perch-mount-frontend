@@ -19,8 +19,8 @@ const model = ref([
         label: '影像',
         items: [
             { label: '待辨識棲架', icon: 'pi pi-fw pi-eye' },
-            { label: '來點空拍檢查', icon: 'pi pi-fw pi-check-square' },
-            { label: '來點檢視物種', icon: 'pi pi-fw pi-pencil' },
+            { label: '來點空拍檢查', icon: 'pi pi-fw pi-check-square', to: '/empty_check' },
+            { label: '來點檢視物種', icon: 'pi pi-fw pi-pencil', to: '/review' },
             { label: '精選', icon: 'pi pi-fw pi-star' },
         ]
     },
@@ -30,6 +30,7 @@ const model = ref([
             { label: '成員', icon: 'pi pi-fw pi-user', to: '/members' },
             { label: '行為', icon: 'pi pi-fw pi-thumbs-up', to: '/behaviors' },
             { label: '相機', icon: 'pi pi-fw pi-camera', to: '/cameras' },
+            { label: '事件', icon: 'pi pi-fw pi-camera', to: '/events' },
             { label: '物種', icon: 'pi pi-fw pi-align-left', to: '/species' },
         ]
     },

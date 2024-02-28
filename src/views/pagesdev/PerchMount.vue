@@ -1,7 +1,9 @@
 <template>
     <Breadcrumb :home="breadcrumbHome" :model="breadcrumbItems" class="mb-4" />
     <div className="card">
-        <ProgressBar :value="50" class="mb-4" style="height: 1rem"></ProgressBar>
+        <ProgressBar :value="100 * (numberMedia / (numberDetected + numberEmpty + numberMedia))" class="mb-4"
+            style="height: 1rem">
+        </ProgressBar>
 
         <div class="flex justify-content-between flex-wrap mb-4">
             <div>
@@ -26,12 +28,24 @@
             </div>
 
             <div class="flex flex-row flex-wrap">
-                <Button label="去檢查空拍" severity="success" icon="pi pi-eye" class="p-button-rounded p-button-sm m-2" />
-                <Button label="去檢視物種" severity="success" icon="pi pi-search" class="p-button-rounded p-button-sm m-2" />
-                <Button label="編輯棲架" severity="secondary" icon="pi pi-pencil" class="p-button-rounded p-button-sm m-2"
-                    @click="perchMountEditVisible = true" />
-                <Button label="認領" severity="warning" icon="pi pi-check" class="p-button-rounded p-button-sm  m-2"
-                    @click="claim" />
+                <div>
+                    <RouterLink :to="emptyCheckPerchMountUrl(perchMount.perch_mount_id)">
+
+                        <Button label="去檢查空拍" severity="success" icon="pi pi-search"
+                            class="p-button-rounded p-button-sm m-2" />
+                    </RouterLink>
+                </div>
+                <RouterLink :to="reviewPerchMountUrl(perchMount.perch_mount_id)">
+                    <Button label="去檢視物種" severity="success" icon="pi pi-eye" class="p-button-rounded p-button-sm m-2" />
+                </RouterLink>
+                <div>
+                    <Button label="編輯棲架" severity="secondary" icon="pi pi-pencil" class="p-button-rounded p-button-sm m-2"
+                        @click="perchMountEditVisible = true" />
+                </div>
+                <div>
+                    <Button label="認領" severity="warning" icon="pi pi-check" class="p-button-rounded p-button-sm  m-2"
+                        @click="claim" />
+                </div>
             </div>
         </div>
 
@@ -44,9 +58,7 @@
                         <Card>
                             <template #title>待空拍檢查檔案</template>
                             <template #content>
-                                <p class="m-0">
-                                    401
-                                </p>
+                                <p class="m-0">{{ numberEmpty }}</p>
                             </template>
                         </Card>
                     </div>
@@ -54,9 +66,7 @@
                         <Card>
                             <template #title>待物種檢視檔案</template>
                             <template #content>
-                                <p class="m-0">
-                                    4687
-                                </p>
+                                <p class="m-0">{{ numberDetected }}</p>
                             </template>
                         </Card>
                     </div>
@@ -99,24 +109,34 @@
                     </router-link>
                 </template>
             </Column>
-            <Column header="空拍檢查" :sortable="true">
+            <Column header="空拍檢查">
                 <template #body="slotProps">
-                    50
+                    <RouterLink :to="`/empty_check?section=${slotProps.data.section_id}`">
+                        <Button :label="mediaCount.empty[slotProps.data.section_id]"
+                            v-if="mediaCount.empty[slotProps.data.section_id]"
+                            class="p-button-secondary p-button-text mr-2 mb-2" />
+                    </RouterLink>
                 </template>
             </Column>
-            <Column header="檢查物種" :sortable="true">
+            <Column header="檢查物種">
                 <template #body="slotProps">
-                    50
+                    <RouterLink :to="`/review?section=${slotProps.data.section_id}`">
+                        <Button :label="mediaCount.detected[slotProps.data.section_id]"
+                            v-if="mediaCount.detected[slotProps.data.section_id]"
+                            class="p-button-secondary p-button-text mr-2 mb-2" />
+                    </RouterLink>
                 </template>
             </Column>
-            <Column header="獵物辨識" :sortable="true">
+            <Column header="獵物辨識">
                 <template #body="slotProps">
-                    50
+                    <Button :label="mediaCount.prey[slotProps.data.section_id]"
+                        v-if="mediaCount.prey[slotProps.data.section_id]"
+                        class="p-button-secondary p-button-text mr-2 mb-2" />
                 </template>
             </Column>
             <template #expansion="slotProps">
                 <div class="p-3">
-                    <!-- <h5>Section {{ slotProps.data.check_date }} Info</h5> -->
+
                     <DataTable :value="[slotProps.data]" responsiveLayout="scroll">
                         <Column field="section_id" header="Section ID" class="surface-ground"></Column>
                         <Column field="start_time" header="相機工作開始時間" class="surface-ground"></Column>
@@ -174,7 +194,7 @@ import { useToast } from 'primevue/usetoast';
 import Location from '../../components/Location.vue'
 import PerchMountEditer from '../../components/PerchMountEditer.vue'
 
-import { getPerchMountByID } from '../../service/PerchMounts'
+import { getPerchMountByID, getMediaCount } from '../../service/PerchMounts'
 import { getSections } from '../../service/Sections'
 
 const route = useRoute()
@@ -187,6 +207,16 @@ const member = ref({})
 const breadcrumbHome = ref({});
 const breadcrumbItems = ref([]);
 
+const mediaCount = ref({
+    "empty": {},
+    "detected": {},
+    "media": {},
+})
+
+const numberEmpty = ref(0)
+const numberDetected = ref(0)
+const numberMedia = ref(0)
+
 const sections = ref([])
 const operators = ref({})
 const cameras = ref({})
@@ -196,27 +226,39 @@ const expandedRows = ref([]);
 
 const perchMountEditVisible = ref(false)
 
-onBeforeMount(() => {
-    getPerchMountByID(route.params.perch_mount_id).then((data) => {
-        findPerchMount(data)
-    })
-    getSections(route.params.perch_mount_id).then((data) => {
-        findSection(data)
-    })
-    breadcrumbHome.value = { icon: 'pi pi-home', to: '/' }
-})
+refresh()
+breadcrumbHome.value = { icon: 'pi pi-home', to: '/' }
 
 
 watch(() => {
+    refresh()
+})
+
+function refresh() {
     getPerchMountByID(route.params.perch_mount_id).then((data) => {
         findPerchMount(data)
     })
     getSections(route.params.perch_mount_id).then((data) => {
         findSection(data)
-
     })
-})
+    getMediaCount(route.params.perch_mount_id).then(data => {
+        mediaCount.value = data
+        numberEmpty.value = 0
+        numberDetected.value = 0
+        numberMedia.value = 0
+        for (const [section, count] of Object.entries(data.empty)) {
+            numberEmpty.value += count
 
+        }
+        for (const [section, count] of Object.entries(data.detected)) {
+            numberDetected.value += count
+
+        }
+        for (const [section, count] of Object.entries(data.media)) {
+            numberMedia.value += count
+        }
+    })
+}
 
 function findPerchMount(data) {
     perchMount.value = data.perch_mounts
@@ -251,6 +293,14 @@ function editorChanged(updatedPerchMount) {
 
 function sectionUrl(project, perchMount, sectionID) {
     return `/projects/${project}/perch_mounts/${perchMount}/sections/${sectionID}`
+}
+
+function reviewPerchMountUrl(perchMountID) {
+    return `/review?perch_mount=${perchMountID}`
+}
+
+function emptyCheckPerchMountUrl(perchMountID) {
+    return `/empty_check?perch_mount=${perchMountID}`
 }
 
 </script>

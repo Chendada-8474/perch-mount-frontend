@@ -67,3 +67,11 @@ export function addPerchMount(data) {
         })
         .then((d) => d)
 }
+
+export function getMediaCount(perchMountID) {
+    var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/perch_mounts/${perchMountID}/media_count`)
+
+    return fetch(endPoint.href)
+        .then((res) => res.json())
+        .then((d) => d);
+}

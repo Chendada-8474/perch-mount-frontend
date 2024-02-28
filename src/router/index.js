@@ -53,6 +53,10 @@ const router = createRouter({
                     component: () => import('@/views/pagesdev/Review.vue'),
                 },
                 {
+                    path: '/empty_check',
+                    component: () => import('@/views/pagesdev/EmptyCheck.vue'),
+                },
+                {
                     path: '/members',
                     component: () => import('@/views/pagesdev/Members.vue'),
                 },

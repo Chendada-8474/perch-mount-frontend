@@ -18,7 +18,7 @@ import { getBehaviors } from '../../service/Behaviors'
 
 const behaviors = ref(null)
 getBehaviors().then((data) => {
-    behaviors.value = data
+    behaviors.value = data.behaviors
 })
 
 </script>
