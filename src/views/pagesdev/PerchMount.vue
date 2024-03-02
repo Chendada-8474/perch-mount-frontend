@@ -188,7 +188,7 @@
 
 
 <script setup>
-import { ref, onBeforeMount, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from 'primevue/usetoast';
 import Location from '../../components/Location.vue'

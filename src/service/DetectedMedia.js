@@ -25,3 +25,9 @@ export function getDetectedMedia(perchMountID = null, sectionID = null, offset =
         .then((res) => res.json())
         .then((d) => d);
 }
+
+export function getDetectedMediumByID(detectedMediumID) {
+    var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/detected_media/${detectedMediumID}`)
+    return fetch(endPoint.href).then(ref => ref.json()).then(d => d)
+
+}
