@@ -31,3 +31,4 @@ export function getDetectedMediumByID(detectedMediumID) {
     return fetch(endPoint.href).then(ref => ref.json()).then(d => d)
 
 }
+

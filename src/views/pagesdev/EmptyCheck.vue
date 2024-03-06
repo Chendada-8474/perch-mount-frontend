@@ -28,7 +28,7 @@
                         <div class="text-center">
                             <Image :src="demoImage" alt="Image" width="100%" preview loading="lazy" />
                         </div>
-
+                        <p class="text-xs text-300">{{ slotProps.data.path }}</p>
                     </div>
                 </div>
             </template>
@@ -51,7 +51,6 @@
             <p>如果繼續沒反應的話就是沒得看了~</p>
             <p class="m-0">
                 <Button label="繼續" severity="primary" @click="getMoreMedia" autofocus />
-
             </p>
         </template>
     </Card>
@@ -66,11 +65,15 @@ import { useRoute } from 'vue-router'
 import { useToast } from 'primevue/usetoast';
 
 import { getEmptyMedia } from '../../service/EmptyMedia'
+import { emptyCheck } from '../../service/EmptyCheck'
+import { me } from '../../service/Me'
 
 const toast = useToast()
 const route = useRoute()
 const url = new URL(route.fullPath, import.meta.env.VITE_BASE_HOST)
 const submitVisible = ref(false)
+
+const currentUser = ref({})
 
 const media = ref([])
 const numberOfSelected = ref(0)
@@ -83,6 +86,11 @@ const demoImage = ref('../../demo/images/trailcam/155_20220511_115417_3fVAF9Gz.J
 refresh()
 
 function refresh() {
+
+    me().then(data => {
+        currentUser.value = data
+    })
+
     getEmptyMedia(
         url.searchParams.get('perch_mount'),
         url.searchParams.get('section'),
@@ -92,8 +100,11 @@ function refresh() {
         media.value = data.media
         for (const medium of media.value) {
             medium.selected = false
+            medium.empty_checker = currentUser.value.user_id
+            console.log(medium)
         }
     })
+
 }
 
 watch(() => {
@@ -141,8 +152,21 @@ function openCheckModal() {
 }
 
 function submit() {
-    media.value = []
-    submitVisible.value = false
+
+    for (const medium of media.value) {
+        medium.empty = !medium.selected
+    }
+
+    emptyCheck({ media: media.value })
+        .then((data) => {
+            toast.add({ severity: 'success', summary: '資料已成功送出', life: 3000 })
+            media.value = []
+            submitVisible.value = false
+        })
+        .catch((e) => {
+            toast.add({ severity: 'error', summary: '資料變更失敗', detail: e.message, life: 3000 })
+        })
+
 }
 
 function getMoreMedia() {

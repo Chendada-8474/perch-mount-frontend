@@ -18,7 +18,7 @@ const model = ref([
     {
         label: '影像',
         items: [
-            { label: '待辨識棲架', icon: 'pi pi-fw pi-eye' },
+            { label: '待辨識棲架', icon: 'pi pi-fw pi-eye', to: '/pending' },
             { label: '來點空拍檢查', icon: 'pi pi-fw pi-check-square', to: '/empty_check' },
             { label: '來點檢視物種', icon: 'pi pi-fw pi-pencil', to: '/review' },
             { label: '精選', icon: 'pi pi-fw pi-star' },

@@ -57,6 +57,10 @@ const router = createRouter({
                     component: () => import('@/views/pagesdev/EmptyCheck.vue'),
                 },
                 {
+                    path: '/pending',
+                    component: () => import('@/views/pagesdev/Pending.vue'),
+                },
+                {
                     path: '/members',
                     component: () => import('@/views/pagesdev/Members.vue'),
                 },
@@ -73,6 +77,11 @@ const router = createRouter({
                 {
                     path: '/behaviors',
                     component: () => import('@/views/pagesdev/Behaviors.vue'),
+
+                },
+                {
+                    path: '/events',
+                    component: () => import('@/views/pagesdev/Events.vue'),
 
                 },
                 {

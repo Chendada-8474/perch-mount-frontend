@@ -197,8 +197,13 @@ import PerchMountEditer from '../../components/PerchMountEditer.vue'
 import { getPerchMountByID, getMediaCount } from '../../service/PerchMounts'
 import { getSections } from '../../service/Sections'
 
+import { me } from '../../service/Me'
+
+
 const route = useRoute()
 const toast = useToast()
+
+const currentUser = ref({})
 
 const perchMount = ref({})
 const project = ref({})
@@ -235,6 +240,9 @@ watch(() => {
 })
 
 function refresh() {
+    me().then(data => {
+        currentUser.value = data
+    })
     getPerchMountByID(route.params.perch_mount_id).then((data) => {
         findPerchMount(data)
     })
@@ -258,6 +266,7 @@ function refresh() {
             numberMedia.value += count
         }
     })
+
 }
 
 function findPerchMount(data) {

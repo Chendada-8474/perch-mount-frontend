@@ -68,10 +68,16 @@
                                 </template>
                             </Column>
                         </DataTable>
-                        <div class="mt-3 text-right">
+                        <div class="mt-3 grid grid-nogutter">
 
-                            <Dropdown v-model="slotProps.data.event" :options="events" optionLabel="name"
-                                placeholder="選擇事件" />
+                            <div class="col-6 text-left">
+                                <p class="text-xs text-300">{{ slotProps.data.path }}</p>
+                            </div>
+                            <div class="col-6 text-right">
+
+                                <Dropdown v-model="slotProps.data.event" :options="events" optionLabel="name"
+                                    placeholder="選擇事件" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -87,7 +93,6 @@
             <p>如果繼續沒反應的話就是沒得看了~</p>
             <p class="m-0">
                 <Button label="繼續" severity="primary" @click="getMoreMedia" autofocus />
-
             </p>
         </template>
     </Card>
@@ -132,8 +137,10 @@
         <hr>
 
         <div>
-            <Button icon="pi pi-check" label="標記為有獵物" severity="primary" @click="tagAllPreys" class="p-button-sm m-2"
-                autofocus />
+            <Button icon="pi pi-check" label="標記為有獵物" severity="primary" @click="tagAllPreysAs(true)"
+                class="p-button-sm m-2" autofocus />
+            <Button icon="pi pi-times" label="取消標記獵物" severity="primary" @click="tagAllPreysAs(false)"
+                class="p-button-sm m-2" autofocus />
         </div>
 
 
@@ -161,9 +168,13 @@ import { getBehaviors } from '../../service/Behaviors'
 import { trieSearch } from '../../service/Species'
 import { getEvents } from '../../service/Events'
 
+import { me } from '../../service/Me'
+
 const toast = useToast()
 const route = useRoute()
 const url = new URL(route.fullPath, import.meta.env.VITE_BASE_HOST)
+
+const currentUser = ref({})
 
 const media = ref([])
 const species = ref({})
@@ -208,6 +219,9 @@ watch(() => {
 })
 
 function refresh() {
+    me().then(data => {
+        currentUser.value = data
+    })
     getDetectedMedia(
         url.searchParams.get('perch_mount'),
         url.searchParams.get('section'),
@@ -224,6 +238,7 @@ function refresh() {
             medium.featured_title = null
             medium.event = null
             medium.featured_behavior = { name: "--", code: null }
+            medium.reviewer = currentUser.value.user_id
         }
     })
 }
@@ -354,11 +369,11 @@ function updateIndividualsClicked() {
 }
 
 
-function tagAllPreys() {
+function tagAllPreysAs(checked) {
     for (const medium of media.value) {
         if (medium.selected) {
             for (const individual of medium.individuals) {
-                individual.prey = true
+                individual.prey = checked
 
             }
         }

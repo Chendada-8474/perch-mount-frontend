@@ -1,6 +1,8 @@
+import { fetchWithloginCheck } from "./utils/api"
+
 export function getPerchMounts(project = null, habitat = null, terminated = null, claim_by = null) {
 
-    var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/perch_mounts`)
+    var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/perch_mounts/`)
     var params = new URLSearchParams()
 
     if (project != null) {
@@ -17,17 +19,12 @@ export function getPerchMounts(project = null, habitat = null, terminated = null
     }
 
     endPoint.search = params
-    return fetch(endPoint.href)
-        .then((res) => res.json())
-        .then((d) => d);
+    return fetchWithloginCheck(endPoint.href, "GET")
 }
 
 export function getPerchMountByID(perchMountID) {
-    var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/perch_mounts/${perchMountID}`)
-
-    return fetch(endPoint.href)
-        .then((res) => res.json())
-        .then((d) => d);
+    var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/perch_mounts/${perchMountID}/`)
+    return fetchWithloginCheck(endPoint.href, "GET")
 }
 
 export function updatePerchMount(perchMountID, data) {
@@ -74,4 +71,9 @@ export function getMediaCount(perchMountID) {
     return fetch(endPoint.href)
         .then((res) => res.json())
         .then((d) => d);
+}
+
+export function getPerchMountPending() {
+    var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/perch_mounts/pending`)
+    return fetch(endPoint.href).then(ref => ref.json()).then(d => d)
 }

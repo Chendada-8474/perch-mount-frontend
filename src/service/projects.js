@@ -1,16 +1,11 @@
+import { fetchWithloginCheck } from "./utils/api"
 
 export function getProjects() {
-    return fetch(`http://${import.meta.env.VITE_BACKEND_HOST}/projects/`)
-        .then((res) => res.json())
-        .then((d) => d);
+    return fetchWithloginCheck(`http://${import.meta.env.VITE_BACKEND_HOST}/projects/`, "GET")
 }
 
 
 
 export function getProjectByID(projectID) {
-    var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/projects/${projectID}`)
-
-    return fetch(endPoint.href)
-        .then((res) => res.json())
-        .then((d) => d);
+    return fetchWithloginCheck(`http://${import.meta.env.VITE_BACKEND_HOST}/projects/${projectID}/`, "GET")
 }
