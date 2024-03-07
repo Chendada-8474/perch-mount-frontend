@@ -1,6 +1,6 @@
+import { fetchWithloginCheck } from "./utils/api"
 
 export function getEvents() {
-    return fetch(`http://${import.meta.env.VITE_BACKEND_HOST}/events/`)
-        .then((res) => res.json())
-        .then((d) => d);
+    const url = `http://${import.meta.env.VITE_BACKEND_HOST}/events/`
+    return fetchWithloginCheck(url, "GET")
 }

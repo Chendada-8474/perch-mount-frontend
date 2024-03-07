@@ -112,7 +112,7 @@ import { useToast } from 'primevue/usetoast';
 import PerchMountEditer from '../../components/PerchMountEditer.vue'
 import NewPerchMountEditer from '../../components/NewPerchMountEditer.vue'
 
-import { getPerchMounts, updatePerchMount, addPerchMount } from '../../service/PerchMounts'
+import { getPerchMounts, updatePerchMountByID, addPerchMount } from '../../service/PerchMounts'
 import { getProjectByID } from '../../service/Projects'
 
 const route = useRoute()
@@ -193,7 +193,7 @@ function updatePerchMountClicked() {
         return
     }
     perchMountEditor.value.visible = false
-    updatePerchMount(perchMountEditor.value.perchMountID, {
+    updatePerchMountByID(perchMountEditor.value.perchMountID, {
         latitude: perchMountEditor.value.latitude,
         longitude: perchMountEditor.value.longitude,
         project: perchMountEditor.value.project,

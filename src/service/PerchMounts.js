@@ -27,53 +27,22 @@ export function getPerchMountByID(perchMountID) {
     return fetchWithloginCheck(endPoint.href, "GET")
 }
 
-export function updatePerchMount(perchMountID, data) {
+export function updatePerchMountByID(perchMountID, data) {
     var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/perch_mounts/${perchMountID}/`)
-
-    return fetch(endPoint.href, {
-        method: "PATCH",
-        body: JSON.stringify(data),
-        headers: { "content-type": "application/json" },
-    })
-        .then((res) => {
-            if (res.ok) {
-                return res.json()
-            }
-            return res.text().then(errorMsg => {
-                throw new Error(errorMsg);
-            });
-        })
-        .then((d) => d)
+    return fetchWithloginCheck(endPoint.href, "PATCH", data)
 }
 
 export function addPerchMount(data) {
     var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/perch_mounts/`)
-
-    return fetch(endPoint.href, {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: { "content-type": "application/json" },
-    })
-        .then((res) => {
-            if (res.ok) {
-                return res.json()
-            }
-            return res.text().then(errorMsg => {
-                throw new Error(errorMsg);
-            });
-        })
-        .then((d) => d)
+    return fetchWithloginCheck(endPoint.href, "POST", data)
 }
 
 export function getMediaCount(perchMountID) {
     var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/perch_mounts/${perchMountID}/media_count`)
-
-    return fetch(endPoint.href)
-        .then((res) => res.json())
-        .then((d) => d);
+    return fetchWithloginCheck(endPoint.href, "GET")
 }
 
 export function getPerchMountPending() {
     var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/perch_mounts/pending`)
-    return fetch(endPoint.href).then(ref => ref.json()).then(d => d)
+    return fetchWithloginCheck(endPoint.href, "GET")
 }

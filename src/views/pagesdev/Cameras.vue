@@ -18,7 +18,7 @@ import { getCameras } from '../../service/Cameras'
 const cameras = ref(null)
 
 getCameras().then((data) => {
-    cameras.value = data
+    cameras.value = data.cameras
 })
 
 </script>

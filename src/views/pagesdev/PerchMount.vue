@@ -194,7 +194,7 @@ import { useToast } from 'primevue/usetoast';
 import Location from '../../components/Location.vue'
 import PerchMountEditer from '../../components/PerchMountEditer.vue'
 
-import { getPerchMountByID, getMediaCount } from '../../service/PerchMounts'
+import { getPerchMountByID, getMediaCount, updatePerchMountByID } from '../../service/PerchMounts'
 import { getSections } from '../../service/Sections'
 
 import { me } from '../../service/Me'
@@ -216,6 +216,7 @@ const mediaCount = ref({
     "empty": {},
     "detected": {},
     "media": {},
+    "prey": {},
 })
 
 const numberEmpty = ref(0)
@@ -293,7 +294,12 @@ function updatePerchMount() {
 }
 
 function claim() {
-    toast.add({ severity: 'success', summary: '認領成功', detail: perchMount.value.perch_mount_name, life: 3000 });
+    updatePerchMountByID(perchMount.value.perch_mount_id, { "claim_by": currentUser.value.user_id })
+        .then(data => {
+            toast.add({ severity: 'success', summary: '認領成功', detail: perchMount.value.perch_mount_name, life: 3000 });
+        }).catch(e => {
+            toast.add({ severity: 'error', summary: '認領失敗', detail: e, life: 3000 });
+        })
 }
 
 function editorChanged(updatedPerchMount) {

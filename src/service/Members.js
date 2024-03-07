@@ -1,6 +1,6 @@
+import { fetchWithloginCheck } from "./utils/api"
 
 export function getMembers() {
-    return fetch(`http://${import.meta.env.VITE_BACKEND_HOST}/members/`)
-        .then((res) => res.json())
-        .then((d) => d);
+    const url = `http://${import.meta.env.VITE_BACKEND_HOST}/members/`
+    return fetchWithloginCheck(url, "GET")
 }

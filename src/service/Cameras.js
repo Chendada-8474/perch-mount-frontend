@@ -1,6 +1,7 @@
+import { fetchWithloginCheck } from "./utils/api"
 
 export function getCameras() {
-    return fetch(`http://${import.meta.env.VITE_BACKEND_HOST}/cameras/`)
-        .then((res) => res.json())
-        .then((d) => d.cameras);
+    const url = `http://${import.meta.env.VITE_BACKEND_HOST}/cameras/`
+    return fetchWithloginCheck(url, "GET")
+
 }
