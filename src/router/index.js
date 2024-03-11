@@ -45,9 +45,20 @@ const router = createRouter({
                             path: '/projects/:project_id(\\d+)/perch_mounts/:perch_mount_id(\\d+)/sections/:section_id(\\d+)/detected_media/:detected_medium_id',
                             name: 'detected_medium',
                             component: () => import('@/views/pagesdev/DetectedMedium.vue')
-                        }
+                        },
+                        {
+                            path: '/projects/:project_id(\\d+)/perch_mounts/:perch_mount_id(\\d+)/sections/:section_id(\\d+)/empty_media/:empty_medium_id',
+                            name: 'empty_medium',
+                            component: () => import('@/views/pagesdev/EmptyMedium.vue')
+                        },
+                        {
+                            path: '/projects/:project_id(\\d+)/perch_mounts/:perch_mount_id(\\d+)/sections/:section_id(\\d+)/media/:medium_id',
+                            name: 'medium',
+                            component: () => import('@/views/pagesdev/Medium.vue')
+                        },
                     ]
                 },
+
                 {
                     path: '/review',
                     component: () => import('@/views/pagesdev/Review.vue'),

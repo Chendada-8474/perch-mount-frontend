@@ -3,9 +3,10 @@
         <div class="col-12 md:col-6">
             <div>
                 <div class="h-100 w-100 cursor-pointer">
-                    <BoundingBoxCanva :individuals="medium.individuals"
-                        path="../../demo/images/trailcam/155_20220511_115417_3fVAF9Gz.JPG" @added="addIndividual">
+                    <BoundingBoxCanva v-if="medium.is_image" :individuals="medium.individuals" :path="medium.s3_path"
+                        @added="addIndividual">
                     </BoundingBoxCanva>
+                    <video v-if="!medium.is_image" :src="medium.s3_path" width="100%" loading="lazy" controls></video>
                 </div>
             </div>
 
@@ -29,6 +30,8 @@
                     </template>
                 </Column>
             </DataTable>
+            <Button v-if="!medium.is_image" label="新增個體" icon="pi pi-plus" class="p-button my-5"
+                @click="addIndividual({})" />
         </div>
     </div>
 </template>
@@ -38,8 +41,6 @@
 import { ref } from 'vue'
 import { trieSearch } from '../service/Species'
 import BoundingBoxCanva from './BoundingBoxCanva.vue';
-
-
 
 
 const medium = ref({

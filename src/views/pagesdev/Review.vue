@@ -24,7 +24,7 @@
                             </div>
                             <div class="col-6 text-right">
                                 <Button
-                                    :icon="`pi ${(!slotProps.data.featured_behavior.code) ? 'pi-heart' : 'pi-heart-fill'}`"
+                                    :icon="`pi ${(!slotProps.data.selected_featured_behavior.code) ? 'pi-heart' : 'pi-heart-fill'}`"
                                     @click="slotProps.data.featureVisibale = !slotProps.data.featureVisibale"
                                     class="p-button-rounded p-button-danger p-button-text mr-2 mb-2" />
                                 <Dialog v-model:visible="slotProps.data.featureVisibale" modal header="編輯精選資訊"
@@ -32,7 +32,7 @@
                                     <div class="mb-4">
                                         <InputText v-model="slotProps.data.featured_title" type="text" placeholder="標題"
                                             class="w-full my-2"></InputText>
-                                        <Dropdown v-model="slotProps.data.featured_behavior" :options="behaviors"
+                                        <Dropdown v-model="slotProps.data.selected_featured_behavior" :options="behaviors"
                                             optionLabel="name" placeholder="Select a Behavior" class="w-full" />
                                     </div>
                                     <Button type="button" label="Close" severity="secondary"
@@ -45,7 +45,10 @@
                         </div>
 
                         <div class="text-center">
-                            <Image :src="demoImage" alt="Image" width="100%" preview loading="lazy" />
+                            <Image v-if="slotProps.data.is_image" :src="slotProps.data.s3_path" alt="Image" width="100%"
+                                preview loading="lazy" />
+                            <video v-if="!slotProps.data.is_image" :src="slotProps.data.s3_path" width="100%" loading="lazy"
+                                controls></video>
                         </div>
                         <DataTable :value="slotProps.data.individuals" size="small">
                             <Column header="物種">
@@ -75,7 +78,7 @@
                             </div>
                             <div class="col-6 text-right">
 
-                                <Dropdown v-model="slotProps.data.event" :options="events" optionLabel="name"
+                                <Dropdown v-model="slotProps.data.selected_event" :options="events" optionLabel="name"
                                     placeholder="選擇事件" />
                             </div>
                         </div>
@@ -167,6 +170,7 @@ import { getDetectedMedia } from '../../service/DetectedMedia'
 import { getBehaviors } from '../../service/Behaviors'
 import { trieSearch } from '../../service/Species'
 import { getEvents } from '../../service/Events'
+import { review } from '../../service/Review'
 
 import { me } from '../../service/Me'
 
@@ -194,8 +198,6 @@ const rightEditerSpeciesOptions = ref([])
 
 const behaviors = ref([])
 const events = ref([])
-
-const demoImage = ref('../../demo/images/trailcam/155_20220511_115417_3fVAF9Gz.JPG')
 
 
 getBehaviors().then(data => {
@@ -236,8 +238,8 @@ function refresh() {
             medium.selected = false
             medium.featureVisibale = false
             medium.featured_title = null
-            medium.event = null
-            medium.featured_behavior = { name: "--", code: null }
+            medium.selected_event = { name: "--", code: null }
+            medium.selected_featured_behavior = { name: "--", code: null }
             medium.reviewer = currentUser.value.user_id
         }
     })
@@ -299,9 +301,29 @@ function openCheckModal() {
 
 function submit() {
     submitVisible.value = false
-    media.value = []
+    mediaToSubmitFormat()
+    console.log(media.value)
+    // review()
+    // media.value = []
 }
 
+
+function mediaToSubmitFormat() {
+    for (const medium of media.value) {
+        const behavior = medium.selected_featured_behavior.code
+        const event = medium.selected_event.code
+        medium.featured_behavior = (behavior) ? parseInt(behavior) : null
+        medium.event = (event) ? parseInt(event) : null
+        for (const individual of medium.individuals) {
+            individual.taxon_order_by_human = parseInt(individual.selected.code)
+            individual.xmax = parseFloat(individual.xmax)
+            individual.xmin = parseFloat(individual.xmin)
+            individual.ymax = parseFloat(individual.ymax)
+            individual.ymin = parseFloat(individual.ymin)
+            delete individual["options"]
+        }
+    }
+}
 
 const lastTimeSelectedIndex = ref(0)
 
@@ -381,10 +403,9 @@ function tagAllPreysAs(checked) {
 }
 
 function updateEventClicked() {
-    console.log(rightEditerSelectedEvent.value)
     for (const medium of media.value) {
         if (medium.selected) {
-            medium.event = rightEditerSelectedEvent.value
+            medium.selected_event = rightEditerSelectedEvent.value
         }
     }
 }
@@ -397,7 +418,8 @@ function getMoreMedia() {
 
 
 <style>
-img {
+img,
+video {
     border-radius: 0.25rem;
     /* width: 100%; */
 }

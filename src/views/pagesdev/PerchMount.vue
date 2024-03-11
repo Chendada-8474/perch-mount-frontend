@@ -1,8 +1,7 @@
 <template>
     <Breadcrumb :home="breadcrumbHome" :model="breadcrumbItems" class="mb-4" />
     <div className="card">
-        <ProgressBar :value="100 * (numberMedia / (numberDetected + numberEmpty + numberMedia))" class="mb-4"
-            style="height: 1rem">
+        <ProgressBar :value="progressing" class="mb-4" style="height: 1rem">
         </ProgressBar>
 
         <div class="flex justify-content-between flex-wrap mb-4">
@@ -20,7 +19,7 @@
                     <Tag class="mr-2" icon="pi pi-sun" severity="info" rounded>
                         {{ habitat.chinese_name }}
                     </Tag>
-                    <Tag class="mr-2" icon="pi pi-times" severity="contrast" v-if="perchMount.terminated" rounded>
+                    <Tag class="mr-2" icon="pi pi-times" severity="info" v-if="perchMount.terminated" rounded>
                         已撤收
                     </Tag>
                 </div>
@@ -45,6 +44,12 @@
                 <div>
                     <Button label="認領" severity="warning" icon="pi pi-check" class="p-button-rounded p-button-sm  m-2"
                         @click="claim" />
+                </div>
+                <div>
+                    <Button v-if="!perchMount.terminated" label="撤收棲架" severity="help" icon="pi pi-ban"
+                        class="p-button-rounded p-button-sm  m-2" @click="updateTerminate(true)" />
+                    <Button v-if="perchMount.terminated" label="恢復棲架" severity="help" icon="pi pi-history"
+                        class="p-button-rounded p-button-sm  m-2" @click="updateTerminate(false)" />
                 </div>
             </div>
         </div>
@@ -232,13 +237,15 @@ const expandedRows = ref([]);
 
 const perchMountEditVisible = ref(false)
 
+const progressing = ref(0)
+
 refresh()
 breadcrumbHome.value = { icon: 'pi pi-home', to: '/' }
 
 
-watch(() => {
-    refresh()
-})
+// watch(() => {
+//     refresh()
+// })
 
 function refresh() {
     me().then(data => {
@@ -267,7 +274,7 @@ function refresh() {
             numberMedia.value += count
         }
     })
-
+    progressing.value = Math.round(100 * (numberMedia.value / (numberDetected.value + numberEmpty.value + numberMedia.value)))
 }
 
 function findPerchMount(data) {
@@ -290,15 +297,25 @@ function findSection(data) {
 
 function updatePerchMount() {
     perchMountEditVisible.value = false
-    toast.add({ severity: 'success', summary: '棲架變更成功', detail: perchMount.value.perch_mount_name, life: 3000 });
 }
 
 function claim() {
     updatePerchMountByID(perchMount.value.perch_mount_id, { "claim_by": currentUser.value.user_id })
         .then(data => {
             toast.add({ severity: 'success', summary: '認領成功', detail: perchMount.value.perch_mount_name, life: 3000 });
+            refresh()
         }).catch(e => {
             toast.add({ severity: 'error', summary: '認領失敗', detail: e, life: 3000 });
+        })
+}
+
+function updateTerminate(isTerminated) {
+    updatePerchMountByID(perchMount.value.perch_mount_id, { "terminated": isTerminated })
+        .then(data => {
+            toast.add({ severity: 'success', summary: '變更成功', detail: perchMount.value.perch_mount_name, life: 3000 });
+            refresh()
+        }).catch(e => {
+            toast.add({ severity: 'error', summary: '變更失敗', detail: e, life: 3000 });
         })
 }
 

@@ -26,11 +26,28 @@
     <div class="card">
         <h5>影像</h5>
         <TabView>
-            <TabPanel header="已完成影像">
-
+            <TabPanel :header="`已完成影像 (${media.length})`">
+                <DataTable v-model:expandedRowGroups="expandedRowGroups" :value="media" tableStyle="min-width: 50rem"
+                    expandableRowGroups rowGroupMode="subheader" groupRowsBy="medium_date" sortMode="single"
+                    sortField="medium_date" :sortOrder="1">
+                    <template #groupheader="slotProps">
+                        <span class="vertical-align-middle ml-2 font-bold line-height-3">{{
+                            slotProps.data.medium_date }}</span>
+                    </template>
+                    <Column field="medium_id" header="Medium ID">
+                        <template #body="slotProps">
+                            <router-link
+                                :to="mediumUrl(perchMount.project, perchMount.perch_mount_id, slotProps.data.section, slotProps.data.medium_id)"
+                                rel="noopener">
+                                {{ slotProps.data.medium_id }}
+                            </router-link>
+                        </template>
+                    </Column>
+                    <Column field="medium_datetime" header="拍攝時間"></Column>
+                </DataTable>
             </TabPanel>
 
-            <TabPanel header="待物種檢視">
+            <TabPanel :header="`待物種檢視 (${detectedMedia.length})`">
                 <DataTable v-model:expandedRowGroups="expandedRowGroups" :value="detectedMedia"
                     tableStyle="min-width: 50rem" expandableRowGroups rowGroupMode="subheader" groupRowsBy="medium_date"
                     sortMode="single" sortField="medium_date" :sortOrder="1">
@@ -50,16 +67,25 @@
                     <Column field="medium_datetime" header="拍攝時間"></Column>
                 </DataTable>
             </TabPanel>
-            <TabPanel header="待空拍檢查">
-                <p class="line-height-3 m-0">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo
-                    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                    pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim
-                    id est
-                    laborum.
-                </p>
+            <TabPanel :header="`待空拍檢查 (${emptyMedia.length})`">
+                <DataTable v-model:expandedRowGroups="expandedRowGroups" :value="emptyMedia" tableStyle="min-width: 50rem"
+                    expandableRowGroups rowGroupMode="subheader" groupRowsBy="medium_date" sortMode="single"
+                    sortField="medium_date" :sortOrder="1">
+                    <template #groupheader="slotProps">
+                        <span class="vertical-align-middle ml-2 font-bold line-height-3">{{
+                            slotProps.data.medium_date }}</span>
+                    </template>
+                    <Column field="empty_medium_id" header="Medium ID">
+                        <template #body="slotProps">
+                            <router-link
+                                :to="emptyMediumUrl(perchMount.project, perchMount.perch_mount_id, slotProps.data.section, slotProps.data.empty_medium_id)"
+                                rel="noopener">
+                                {{ slotProps.data.empty_medium_id }}
+                            </router-link>
+                        </template>
+                    </Column>
+                    <Column field="medium_datetime" header="拍攝時間"></Column>
+                </DataTable>
             </TabPanel>
         </TabView>
     </div>
@@ -73,7 +99,9 @@ import moment from 'moment'
 import { getProjectByID } from '../../service/Projects'
 import { getPerchMountByID } from '../../service/PerchMounts'
 import { getSectionByID } from '../../service/Sections'
+import { getMedia } from '../../service/Media'
 import { getDetectedMedia } from '../../service/DetectedMedia'
+import { getEmptyMedia } from '../../service/EmptyMedia'
 
 const route = useRoute()
 
@@ -85,7 +113,9 @@ const perchMount = ref({})
 const section = ref({})
 const camera = ref({})
 
+const media = ref([])
 const detectedMedia = ref([])
+const emptyMedia = ref([])
 const expandedRowGroups = ref()
 
 breadcrumbHome.value = { icon: 'pi pi-home', to: '/' }
@@ -114,10 +144,25 @@ getSectionByID(route.params.section_id).then((data) => {
 getDetectedMedia(null, route.params.section_id, null, 20000).then((data) => {
     detectedMedia.value = data.media
     for (var medium of detectedMedia.value) {
-        medium.medium_date = moment(medium.medium_datetime).format("YYYY-MM-DD")
+        medium.medium_date = formatMediumDate(medium.medium_datetime)
+    }
+})
+getEmptyMedia(null, route.params.section_id, null, 20000).then(data => {
+    emptyMedia.value = data.media
+    for (const medium of emptyMedia.value) {
+        medium.medium_date = formatMediumDate(medium.medium_datetime)
+    }
+})
+getMedia(null, route.params.section_id, null, 20000).then(data => {
+    media.value = data.media
+    for (const medium of media.value) {
+        medium.medium_date = formatMediumDate(medium.medium_datetime)
     }
 })
 
+function formatMediumDate(isoDatetime) {
+    return moment(isoDatetime).format("YYYY-MM-DD")
+}
 
 const memberStringList = (operators, field) => {
     if (!operators) {
@@ -131,8 +176,14 @@ const memberStringList = (operators, field) => {
 }
 
 
+function mediumUrl(project, perchMount, sectionID, mediumID) {
+    return `/projects/${project}/perch_mounts/${perchMount}/sections/${sectionID}/media/${mediumID}`
+}
 function detectedMediumUrl(project, perchMount, sectionID, detectedMediumID) {
     return `/projects/${project}/perch_mounts/${perchMount}/sections/${sectionID}/detected_media/${detectedMediumID}`
+}
+function emptyMediumUrl(project, perchMount, sectionID, emptyMediumID) {
+    return `/projects/${project}/perch_mounts/${perchMount}/sections/${sectionID}/empty_media/${emptyMediumID}`
 }
 
 

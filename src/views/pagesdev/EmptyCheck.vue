@@ -26,7 +26,10 @@
                         </div>
 
                         <div class="text-center">
-                            <Image :src="demoImage" alt="Image" width="100%" preview loading="lazy" />
+                            <Image v-if="slotProps.data.is_image" :src="slotProps.data.s3_path" alt="Image" width="100%"
+                                preview loading="lazy" />
+                            <video v-if="!slotProps.data.is_image" :src="slotProps.data.s3_path" width="100%" loading="lazy"
+                                controls></video>
                         </div>
                         <p class="text-xs text-300">{{ slotProps.data.path }}</p>
                     </div>
@@ -80,7 +83,6 @@ const numberOfSelected = ref(0)
 
 const layout = ref('grid');
 
-const demoImage = ref('../../demo/images/trailcam/155_20220511_115417_3fVAF9Gz.JPG')
 
 
 refresh()
@@ -101,7 +103,6 @@ function refresh() {
         for (const medium of media.value) {
             medium.selected = false
             medium.empty_checker = currentUser.value.user_id
-            console.log(medium)
         }
     })
 

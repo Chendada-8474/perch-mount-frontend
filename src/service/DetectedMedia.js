@@ -1,7 +1,8 @@
+import { fetchWithloginCheck } from "./utils/api"
 
 export function getDetectedMedia(perchMountID = null, sectionID = null, offset = null, limit = null) {
 
-    var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/detected_media`)
+    var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/detected_media/`)
     var params = new URLSearchParams()
 
 
@@ -21,14 +22,11 @@ export function getDetectedMedia(perchMountID = null, sectionID = null, offset =
     }
 
     endPoint.search = params
-    return fetch(endPoint.href)
-        .then((res) => res.json())
-        .then((d) => d);
+    return fetchWithloginCheck(endPoint.href, "GET")
 }
 
 export function getDetectedMediumByID(detectedMediumID) {
-    var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/detected_media/${detectedMediumID}`)
-    return fetch(endPoint.href).then(ref => ref.json()).then(d => d)
-
+    var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/detected_media/${detectedMediumID}/`)
+    return fetchWithloginCheck(endPoint.href, "GET")
 }
 
