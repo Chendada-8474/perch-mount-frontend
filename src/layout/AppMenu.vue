@@ -12,7 +12,7 @@ const model = ref([
         items: [
             { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' },
             { label: '資料下載器', icon: 'pi pi-fw pi-database', to: '/data_download' },
-            { label: '參數產生器', icon: 'pi pi-fw pi-file-edit', to: '/upload_params' },
+            { label: '上傳參數產生器', icon: 'pi pi-fw pi-file-edit', to: '/upload_params' },
         ]
     },
     {

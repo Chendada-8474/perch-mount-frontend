@@ -37,7 +37,7 @@
                 <RouterLink :to="reviewPerchMountUrl(perchMount.perch_mount_id)">
                     <Button label="去檢視物種" severity="success" icon="pi pi-eye" class="p-button-rounded p-button-sm m-2" />
                 </RouterLink>
-                <div>
+                <div v-if="currentUser.is_admin">
                     <Button label="編輯棲架" severity="secondary" icon="pi pi-pencil" class="p-button-rounded p-button-sm m-2"
                         @click="perchMountEditVisible = true" />
                 </div>
@@ -45,7 +45,7 @@
                     <Button label="認領" severity="warning" icon="pi pi-check" class="p-button-rounded p-button-sm  m-2"
                         @click="claim" />
                 </div>
-                <div>
+                <div v-if="currentUser.is_admin">
                     <Button v-if="!perchMount.terminated" label="撤收棲架" severity="help" icon="pi pi-ban"
                         class="p-button-rounded p-button-sm  m-2" @click="updateTerminate(true)" />
                     <Button v-if="perchMount.terminated" label="恢復棲架" severity="help" icon="pi pi-history"
@@ -242,14 +242,10 @@ const progressing = ref(0)
 refresh()
 breadcrumbHome.value = { icon: 'pi pi-home', to: '/' }
 
-
-// watch(() => {
-//     refresh()
-// })
-
 function refresh() {
     me().then(data => {
         currentUser.value = data
+        console.log(data)
     })
     getPerchMountByID(route.params.perch_mount_id).then((data) => {
         findPerchMount(data)
