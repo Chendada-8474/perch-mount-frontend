@@ -3,9 +3,10 @@
     <div className="card">
         <div class="flex justify-content-between flex-wrap mb-4">
             <h5>棲架</h5>
-            <Button label="新增棲架" @click="newPerchMount.visible = true" icon="pi pi-plus"
-                class="p-button-rounded p-button-sm m-2" />
+
+            <Button label="新增棲架" @click="newPerchMount.visible = true" icon="pi pi-plus" class="p-button p-button-sm m-2" />
         </div>
+        <p>頁面製作中...</p>
     </div>
     <div class="grid p-fluid mt-3">
         <div v-for="perchMount in workingPerchMounts" class="field col-12 md:col-3">

@@ -302,9 +302,12 @@ function openCheckModal() {
 function submit() {
     submitVisible.value = false
     mediaToSubmitFormat()
-    console.log(media.value)
-    // review()
-    // media.value = []
+    review(media.value).then(data => {
+        toast.add({ severity: 'success', summary: 'review 成功', life: 3000 })
+        media.value = []
+    }).catch(e => {
+        toast.add({ severity: 'error', summary: 'review 失敗', detail: e, life: 3000 })
+    })
 }
 
 
