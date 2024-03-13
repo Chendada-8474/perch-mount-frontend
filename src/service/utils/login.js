@@ -1,5 +1,5 @@
 export function loginRequest(username, phonenumber) {
-    var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/login`)
+    var endPoint = new URL(`${import.meta.env.VITE_BACKEND_HOST}/login`)
     return fetch(endPoint.href, {
         method: "POST",
         credentials: "include",
