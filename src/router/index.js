@@ -100,17 +100,17 @@ const router = createRouter({
 
                 },
                 {
-                    path: '/',
-                    name: 'dashboard',
-                    component: () => import('@/views/Dashboard.vue')
-                },
-                {
                     path: '/data_download',
-                    component: () => import('@/views/DataDownloads.vue')
+                    component: () => import('@/views/pagesdev/DataDownloads.vue')
                 },
                 {
                     path: '/upload_params',
-                    component: () => import('@/views/UploadParams.vue')
+                    component: () => import('@/views/pagesdev/UploadParams.vue')
+                },
+                {
+                    path: '/',
+                    name: 'dashboard',
+                    component: () => import('@/views/Dashboard.vue')
                 },
             ]
         },

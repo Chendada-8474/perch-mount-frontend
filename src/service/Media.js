@@ -2,7 +2,7 @@ import { fetchWithloginCheck } from "./utils/api"
 
 export function getMedia(perchMountID = null, sectionID = null, offset = null, limit = null) {
 
-    var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/media/`)
+    var endPoint = new URL(`${import.meta.env.VITE_BACKEND_HOST}/media/`)
     var params = new URLSearchParams()
 
 
@@ -28,6 +28,6 @@ export function getMedia(perchMountID = null, sectionID = null, offset = null, l
 
 
 export function getMediumByID(mediumID) {
-    var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/media/${mediumID}/`)
+    var endPoint = new URL(`${import.meta.env.VITE_BACKEND_HOST}/media/${mediumID}/`)
     return fetchWithloginCheck(endPoint.href, "GET")
 }

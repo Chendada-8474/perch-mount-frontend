@@ -2,7 +2,7 @@ import { fetchWithloginCheck } from "./utils/api"
 
 export function getSections(perchMount = null, checkDateFrom = null, checkDateTo = null, valid = null, operator = null) {
 
-    var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/sections/`)
+    var endPoint = new URL(`${import.meta.env.VITE_BACKEND_HOST}/sections/`)
     var params = new URLSearchParams()
 
     if (perchMount != null) {
@@ -26,6 +26,6 @@ export function getSections(perchMount = null, checkDateFrom = null, checkDateTo
 }
 
 export function getSectionByID(sectionID) {
-    var endPoint = new URL(`http://${import.meta.env.VITE_BACKEND_HOST}/sections/${sectionID}/`)
+    var endPoint = new URL(`${import.meta.env.VITE_BACKEND_HOST}/sections/${sectionID}/`)
     return fetchWithloginCheck(endPoint.href, "GET")
 }
