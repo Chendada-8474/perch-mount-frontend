@@ -72,6 +72,10 @@ const router = createRouter({
                     component: () => import('@/views/pagesdev/Pending.vue'),
                 },
                 {
+                    path: '/highlights',
+                    component: () => import('@/views/pagesdev/Highlights.vue'),
+                },
+                {
                     path: '/members',
                     component: () => import('@/views/pagesdev/Members.vue'),
                 },
@@ -99,6 +103,14 @@ const router = createRouter({
                     path: '/',
                     name: 'dashboard',
                     component: () => import('@/views/Dashboard.vue')
+                },
+                {
+                    path: '/data_download',
+                    component: () => import('@/views/DataDownloads.vue')
+                },
+                {
+                    path: '/upload_params',
+                    component: () => import('@/views/UploadParams.vue')
                 },
             ]
         },

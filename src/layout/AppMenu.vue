@@ -9,7 +9,11 @@ import { getProjects } from '@/service/projects'
 const model = ref([
     {
         label: 'Home',
-        items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' }]
+        items: [
+            { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' },
+            { label: '資料下載器', icon: 'pi pi-fw pi-database', to: '/data_download' },
+            { label: '參數產生器', icon: 'pi pi-fw pi-file-edit', to: '/upload_params' },
+        ]
     },
     {
         label: '計畫',
@@ -21,7 +25,7 @@ const model = ref([
             { label: '待辨識棲架', icon: 'pi pi-fw pi-eye', to: '/pending' },
             { label: '來點空拍檢查', icon: 'pi pi-fw pi-check-square', to: '/empty_check' },
             { label: '來點檢視物種', icon: 'pi pi-fw pi-pencil', to: '/review' },
-            { label: '精選', icon: 'pi pi-fw pi-star' },
+            { label: '精選', icon: 'pi pi-fw pi-star', to: '/highlights' },
         ]
     },
     {
