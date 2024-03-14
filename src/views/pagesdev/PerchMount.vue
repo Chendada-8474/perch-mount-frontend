@@ -195,7 +195,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'primevue/usetoast'
 import Location from '../../components/Location.vue'
 import PerchMountEditer from '../../components/PerchMountEditer.vue'
 
@@ -245,7 +245,6 @@ breadcrumbHome.value = { icon: 'pi pi-home', to: '/' }
 function refresh() {
     me().then(data => {
         currentUser.value = data
-        console.log(data)
     })
     getPerchMountByID(route.params.perch_mount_id).then((data) => {
         findPerchMount(data)

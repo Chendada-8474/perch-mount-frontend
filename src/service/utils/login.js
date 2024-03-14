@@ -22,3 +22,22 @@ export function loginRequest(username, phonenumber) {
     })
         .then((d) => d)
 }
+
+
+export function signOut() {
+    var endPoint = new URL(`${import.meta.env.VITE_BACKEND_HOST}/logout`)
+    return fetch(endPoint.href, {
+        method: "POST",
+        credentials: "include",
+    }).then((res) => {
+
+        if (res.ok) {
+            return res.json()
+        }
+
+        return res.text().then(errorMsg => {
+            throw new Error(errorMsg);
+        });
+    })
+        .then((d) => d)
+}
