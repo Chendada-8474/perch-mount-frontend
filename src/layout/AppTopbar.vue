@@ -2,14 +2,17 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
+import { useToast } from 'primevue/usetoast'
 
 import { me } from '../service/Me'
+import { signOut } from '../service/utils/login'
 
 const { layoutConfig, onMenuToggle } = useLayout();
 
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
 const router = useRouter();
+const toast = useToast()
 
 const currentUser = ref({})
 
@@ -66,6 +69,16 @@ const isOutsideClicked = (event) => {
 
     return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target) || topbarEl.isSameNode(event.target) || topbarEl.contains(event.target));
 };
+
+
+const signOutClicked = () => {
+    signOut().then(data => {
+        window.location.replace("/auth/login")
+    }).catch(e => {
+        toast.add({ severity: 'error', summary: '認領失敗', detail: e, life: 3000 });
+    })
+}
+
 </script>
 
 <template>
@@ -94,12 +107,14 @@ const isOutsideClicked = (event) => {
                     <span>Profile</span>
                 </button>
             </router-link>
+            <Button label="sign out" severity="secondary" @click="signOutClicked" text />
             <!-- <button @click="onSettingsClick()" class="p-link layout-topbar-button">
                 <i class="pi pi-cog"></i>
                 <span>Settings</span>
             </button> -->
         </div>
     </div>
+    <Toast></Toast>
 </template>
 
 <style lang="scss" scoped></style>

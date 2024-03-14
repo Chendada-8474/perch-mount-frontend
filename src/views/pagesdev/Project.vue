@@ -4,7 +4,8 @@
         <div class="flex justify-content-between flex-wrap mb-4">
             <h5>棲架</h5>
 
-            <Button label="新增棲架" @click="newPerchMount.visible = true" icon="pi pi-plus" class="p-button p-button-sm m-2" />
+            <Button v-if="currentUser.is_admin" label="新增棲架" @click="newPerchMount.visible = true" icon="pi pi-plus"
+                class="p-button p-button-sm m-2" />
         </div>
         <p>頁面製作中...</p>
     </div>
@@ -18,8 +19,8 @@
                             class="">
                             <Button :label="perchMount.perch_mount_name" class="p-button-lg px-1 py-0" text />
                         </router-link>
-                        <Button @click="showPerchMountEditor(perchMount.perch_mount_id)" icon="pi pi-pencil"
-                            class="p-button-rounded p-button-secondary p-button-text mr-2" />
+                        <Button v-if="currentUser.is_admin" @click="showPerchMountEditor(perchMount.perch_mount_id)"
+                            icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text mr-2" />
                     </div>
                     <Tag class="mr-2" icon="pi pi-info-circle" v-if="perchMount.is_priority" severity="danger" rounded>優先處裡
                     </Tag>
@@ -50,8 +51,8 @@
                                 text />
                         </router-link>
 
-                        <Button @click="showPerchMountEditor(perchMount.perch_mount_id)" icon="pi pi-pencil"
-                            class="p-button-rounded p-button-secondary p-button-text mr-2 mb-2" />
+                        <Button v-if="currentUser.is_admin" @click="showPerchMountEditor(perchMount.perch_mount_id)"
+                            icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text mr-2 mb-2" />
 
                     </div>
                     <Tag class="mr-2" icon="pi pi-user" value="Primary" v-if="perchMount.claim_by" rounded>
@@ -107,7 +108,7 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router'
 import { useToast } from 'primevue/usetoast';
 import PerchMountEditer from '../../components/PerchMountEditer.vue'
@@ -115,9 +116,12 @@ import NewPerchMountEditer from '../../components/NewPerchMountEditer.vue'
 
 import { getPerchMounts, updatePerchMountByID, addPerchMount } from '../../service/PerchMounts'
 import { getProjectByID } from '../../service/Projects'
+import { me } from '../../service/Me'
 
 const route = useRoute()
 const toast = useToast()
+
+const currentUser = ref({})
 
 const terminatedPerchMounts = ref(null)
 const workingPerchMounts = ref(null)
@@ -129,24 +133,27 @@ const members = ref(null)
 const breadcrumbHome = ref({});
 const breadcrumbItems = ref([]);
 
-onBeforeMount(() => {
-    getPerchMounts(route.params.project_id).then((data) => {
-        findResources(data)
-    })
-    getProjectByID(route.params.project_id).then((data) => {
-        findBreadcrumb(data)
-    })
-    breadcrumbHome.value = { icon: 'pi pi-home', to: '/' }
-})
+
+breadcrumbHome.value = { icon: 'pi pi-home', to: '/' }
+
+refresh()
 
 watch(() => {
+    refresh()
+})
+
+
+function refresh() {
+    me().then(data => {
+        currentUser.value = data
+    })
     getPerchMounts(route.params.project_id).then((data) => {
         findResources(data)
     })
     getProjectByID(route.params.project_id).then((data) => {
         findBreadcrumb(data)
     })
-})
+}
 
 function findResources(perchMountsBody) {
     terminatedPerchMounts.value = perchMountsBody.perch_mounts.filter(perch_mount => perch_mount.terminated)
@@ -163,7 +170,7 @@ function findBreadcrumb(data) {
 
 }
 
-function refresh() {
+function refreshPerchMount() {
     getPerchMounts(route.params.project_id).then((data) => {
         findResources(data)
     })
@@ -204,7 +211,7 @@ function updatePerchMountClicked() {
     })
         .then((data) => {
             toast.add({ severity: 'success', summary: '棲架變更成功', detail: perchMountEditor.value.perchMountName, life: 3000 })
-            refresh()
+            refreshPerchMount()
         })
         .catch((e) => {
             toast.add({ severity: 'error', summary: '棲架變更失敗', detail: e, life: 3000 })
@@ -263,7 +270,7 @@ function addPerchMountClicked() {
         layer: newPerchMount.value.layer,
     }).then((data) => {
         toast.add({ severity: 'success', summary: '棲架新增成功', detail: newPerchMount.value.perchMountName, life: 3000 })
-        refresh()
+        refreshPerchMount()
     }).catch((e) => {
         toast.add({ severity: 'error', summary: '棲架新增失敗', detail: e, life: 3000 })
     })
