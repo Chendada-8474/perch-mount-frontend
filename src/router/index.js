@@ -9,144 +9,110 @@ const router = createRouter({
             component: AppLayout,
             children: [
                 {
-                    path: '/',
-                    name: 'dashboard',
-                    component: () => import('@/views/Dashboard.vue')
-                },
-                {
-                    path: '/uikit/formlayout',
-                    name: 'formlayout',
-                    component: () => import('@/views/uikit/FormLayout.vue')
-                },
-                {
-                    path: '/uikit/input',
-                    name: 'input',
-                    component: () => import('@/views/uikit/Input.vue')
-                },
-                {
-                    path: '/uikit/floatlabel',
-                    name: 'floatlabel',
-                    component: () => import('@/views/uikit/FloatLabel.vue')
-                },
-                {
-                    path: '/uikit/invalidstate',
-                    name: 'invalidstate',
-                    component: () => import('@/views/uikit/InvalidState.vue')
-                },
-                {
-                    path: '/uikit/button',
-                    name: 'button',
-                    component: () => import('@/views/uikit/Button.vue')
-                },
-                {
-                    path: '/uikit/table',
-                    name: 'table',
-                    component: () => import('@/views/uikit/Table.vue')
-                },
-                {
-                    path: '/uikit/list',
-                    name: 'list',
-                    component: () => import('@/views/uikit/List.vue')
-                },
-                {
-                    path: '/uikit/tree',
-                    name: 'tree',
-                    component: () => import('@/views/uikit/Tree.vue')
-                },
-                {
-                    path: '/uikit/panel',
-                    name: 'panel',
-                    component: () => import('@/views/uikit/Panels.vue')
-                },
-
-                {
-                    path: '/uikit/overlay',
-                    name: 'overlay',
-                    component: () => import('@/views/uikit/Overlay.vue')
-                },
-                {
-                    path: '/uikit/media',
-                    name: 'media',
-                    component: () => import('@/views/uikit/Media.vue')
-                },
-                {
-                    path: '/uikit/menu',
-                    component: () => import('@/views/uikit/Menu.vue'),
+                    path: '/projects',
                     children: [
                         {
-                            path: '/uikit/menu',
-                            component: () => import('@/views/uikit/menu/PersonalDemo.vue')
+                            path: '/projects/:project_id(\\d+)',
+                            name: 'project',
+                            component: () => import('@/views/pagesdev/Project.vue'),
                         },
+                    ]
+                },
+                {
+                    path: '/projects/:id(\\d+)/perch_mounts',
+                    children: [
                         {
-                            path: '/uikit/menu/seat',
-                            component: () => import('@/views/uikit/menu/SeatDemo.vue')
-                        },
-                        {
-                            path: '/uikit/menu/payment',
-                            component: () => import('@/views/uikit/menu/PaymentDemo.vue')
-                        },
-                        {
-                            path: '/uikit/menu/confirmation',
-                            component: () => import('@/views/uikit/menu/ConfirmationDemo.vue')
+                            path: '/projects/:project_id(\\d+)/perch_mounts/:perch_mount_id(\\d+)',
+                            name: 'perch_mount',
+                            component: () => import('@/views/pagesdev/PerchMount.vue')
                         }
                     ]
                 },
                 {
-                    path: '/uikit/message',
-                    name: 'message',
-                    component: () => import('@/views/uikit/Messages.vue')
+                    path: '/projects/:project_id(\\d+)/perch_mounts/:perch_mount_id(\\d+)',
+                    children: [
+                        {
+                            path: '/projects/:project_id(\\d+)/perch_mounts/:perch_mount_id(\\d+)/sections/:section_id(\\d+)',
+                            name: 'section',
+                            component: () => import('@/views/pagesdev/Section.vue')
+                        }
+                    ]
                 },
                 {
-                    path: '/uikit/file',
-                    name: 'file',
-                    component: () => import('@/views/uikit/File.vue')
+                    path: '/projects/:project_id(\\d+)/perch_mounts/:perch_mount_id(\\d+)/sections/:section_id(\\d+)',
+                    children: [
+                        {
+                            path: '/projects/:project_id(\\d+)/perch_mounts/:perch_mount_id(\\d+)/sections/:section_id(\\d+)/detected_media/:detected_medium_id',
+                            name: 'detected_medium',
+                            component: () => import('@/views/pagesdev/DetectedMedium.vue')
+                        },
+                        {
+                            path: '/projects/:project_id(\\d+)/perch_mounts/:perch_mount_id(\\d+)/sections/:section_id(\\d+)/empty_media/:empty_medium_id',
+                            name: 'empty_medium',
+                            component: () => import('@/views/pagesdev/EmptyMedium.vue')
+                        },
+                        {
+                            path: '/projects/:project_id(\\d+)/perch_mounts/:perch_mount_id(\\d+)/sections/:section_id(\\d+)/media/:medium_id',
+                            name: 'medium',
+                            component: () => import('@/views/pagesdev/Medium.vue')
+                        },
+                    ]
+                },
+
+                {
+                    path: '/review',
+                    component: () => import('@/views/pagesdev/Review.vue'),
                 },
                 {
-                    path: '/uikit/charts',
-                    name: 'charts',
-                    component: () => import('@/views/uikit/Chart.vue')
+                    path: '/empty_check',
+                    component: () => import('@/views/pagesdev/EmptyCheck.vue'),
                 },
                 {
-                    path: '/uikit/misc',
-                    name: 'misc',
-                    component: () => import('@/views/uikit/Misc.vue')
+                    path: '/pending',
+                    component: () => import('@/views/pagesdev/Pending.vue'),
                 },
                 {
-                    path: '/blocks',
-                    name: 'blocks',
-                    component: () => import('@/views/utilities/Blocks.vue')
+                    path: '/highlights',
+                    component: () => import('@/views/pagesdev/Highlights.vue'),
                 },
                 {
-                    path: '/utilities/icons',
-                    name: 'icons',
-                    component: () => import('@/views/utilities/Icons.vue')
+                    path: '/members',
+                    component: () => import('@/views/pagesdev/Members.vue'),
                 },
                 {
-                    path: '/pages/timeline',
-                    name: 'timeline',
-                    component: () => import('@/views/pages/Timeline.vue')
+                    path: '/species',
+                    component: () => import('@/views/pagesdev/Species.vue'),
+
                 },
                 {
-                    path: '/pages/empty',
-                    name: 'empty',
-                    component: () => import('@/views/pages/Empty.vue')
+                    path: '/cameras',
+                    component: () => import('@/views/pagesdev/Cameras.vue'),
+
                 },
                 {
-                    path: '/pages/crud',
-                    name: 'crud',
-                    component: () => import('@/views/pages/Crud.vue')
+                    path: '/behaviors',
+                    component: () => import('@/views/pagesdev/Behaviors.vue'),
+
                 },
                 {
-                    path: '/documentation',
-                    name: 'documentation',
-                    component: () => import('@/views/utilities/Documentation.vue')
-                }
+                    path: '/events',
+                    component: () => import('@/views/pagesdev/Events.vue'),
+
+                },
+                {
+                    path: '/data_download',
+                    component: () => import('@/views/pagesdev/DataDownloads.vue')
+                },
+                {
+                    path: '/upload_params',
+                    component: () => import('@/views/pagesdev/UploadParams.vue')
+                },
+                {
+                    path: '/',
+                    name: 'dashboard',
+                    component: () => import('@/views/Dashboard.vue')
+                },
             ]
-        },
-        {
-            path: '/landing',
-            name: 'landing',
-            component: () => import('@/views/pages/Landing.vue')
         },
         {
             path: '/pages/notfound',
@@ -168,7 +134,12 @@ const router = createRouter({
             path: '/auth/error',
             name: 'error',
             component: () => import('@/views/pages/auth/Error.vue')
-        }
+        },
+        {
+            path: '/:pathMatch(.*)*',
+            name: 'NotFound',
+            component: import('@/views/pages/NotFound.vue')
+        },
     ]
 });
 
