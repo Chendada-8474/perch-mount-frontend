@@ -3,9 +3,11 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast'
+import { storeToRefs } from 'pinia';
 
 import { me } from '../service/Me'
 import { signOut } from '../service/utils/login'
+import { useCurrentUser } from '../stores/currnetUser';
 
 const { layoutConfig, onMenuToggle } = useLayout();
 
@@ -14,11 +16,8 @@ const topbarMenuActive = ref(false);
 const router = useRouter();
 const toast = useToast()
 
-const currentUser = ref({})
 
-me().then(data => {
-    currentUser.value = data
-})
+const currentUser = useCurrentUser()
 
 onMounted(() => {
     bindOutsideClickListener();
@@ -101,11 +100,14 @@ const signOutClicked = () => {
                 <i class="pi pi-calendar"></i>
                 <span>Calendar</span>
             </button> -->
-            <router-link :to="`/me`" class="">
+            <!-- <router-link to="/me" class="">
                 <button class="p-link layout-topbar-button">
                     <i class="pi pi-user"></i>
                     <span>Profile</span>
                 </button>
+            </router-link> -->
+            <router-link to="/me">
+                <Button icon="pi pi-user" :label="`Hi! ${currentUser.user}`" severity="secondary" text />
             </router-link>
             <Button label="sign out" severity="secondary" @click="signOutClicked" text />
             <!-- <button @click="onSettingsClick()" class="p-link layout-topbar-button">

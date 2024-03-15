@@ -108,9 +108,24 @@ const router = createRouter({
                     component: () => import('@/views/pagesdev/UploadParams.vue')
                 },
                 {
+                    path: '/me',
+                    component: () => import('@/views/pagesdev/Me.vue')
+                },
+
+                {
                     path: '/',
                     name: 'dashboard',
                     component: () => import('@/views/Dashboard.vue')
+                },
+            ]
+        },
+        {
+            path: '/external',
+            children: [
+                {
+                    path: '/external/:service',
+                    name: 'externalService',
+                    component: () => import('@/components/External.vue'),
                 },
             ]
         },

@@ -38,6 +38,12 @@ const model = ref([
             { label: '物種', icon: 'pi pi-fw pi-align-left', to: '/species' },
         ]
     },
+    {
+        label: '外部連結',
+        items: [
+            { label: 'Release Infomation', icon: 'pi pi-fw pi-github', to: '/external/release' },
+        ]
+    },
 ]);
 
 
