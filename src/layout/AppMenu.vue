@@ -3,7 +3,7 @@ import { ref } from 'vue';
 
 import AppMenuItem from './AppMenuItem.vue';
 
-import { getProjects } from '@/service/projects'
+import { getProjects } from '@/service/Projects'
 
 
 const model = ref([
