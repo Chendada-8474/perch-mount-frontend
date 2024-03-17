@@ -5,7 +5,8 @@
         <div class="grid">
             <div class="col-6">
                 <Image v-if="medium.is_image" :src="medium.s3_path" alt="Image" width="100%" preview loading="lazy" />
-                <video v-if="!medium.is_image" :src="medium.s3_path" width="100%" loading="lazy" controls></video>
+                <video v-if="!medium.is_image" :src="getVideoEndpoint(medium.base32_path)" width="100%" loading="lazy"
+                    controls></video>
             </div>
             <div class="col-6">
                 <p class="my-3 text-300">{{ medium.path }}</p>
@@ -26,7 +27,7 @@ import { getProjectByID } from '../../service/Projects'
 import { getPerchMountByID } from '../../service/PerchMounts'
 import { getSectionByID } from '../../service/Sections'
 import { getEmptyMediumByID } from '../../service/EmptyMedia'
-
+import { getVideoEndpoint } from '../../service/utils/video'
 
 
 const route = useRoute()

@@ -28,8 +28,8 @@
                         <div class="text-center">
                             <Image v-if="slotProps.data.is_image" :src="slotProps.data.s3_path" alt="Image" width="100%"
                                 preview loading="lazy" />
-                            <video v-if="!slotProps.data.is_image" :src="slotProps.data.s3_path" width="100%" loading="lazy"
-                                controls></video>
+                            <video v-if="!slotProps.data.is_image" :src="getVideoEndpoint(slotProps.data.base32_path)"
+                                width="100%" loading="lazy" controls></video>
                         </div>
                         <p class="text-xs text-300">{{ slotProps.data.path }}</p>
                     </div>
@@ -70,6 +70,7 @@ import { useToast } from 'primevue/usetoast';
 import { getEmptyMedia } from '../../service/EmptyMedia'
 import { emptyCheck } from '../../service/EmptyCheck'
 import { me } from '../../service/Me'
+import { getVideoEndpoint } from '../../service/utils/video'
 
 const toast = useToast()
 const route = useRoute()

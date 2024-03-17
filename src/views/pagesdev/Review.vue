@@ -47,8 +47,8 @@
                         <div class="text-center">
                             <Image v-if="slotProps.data.is_image" :src="slotProps.data.s3_path" alt="Image" width="100%"
                                 preview loading="lazy" />
-                            <video v-if="!slotProps.data.is_image" :src="slotProps.data.s3_path" width="100%" loading="lazy"
-                                controls></video>
+                            <video v-if="!slotProps.data.is_image" :src="getVideoEndpoint(slotProps.data.base32_path)"
+                                width="100%" loading="lazy" controls></video>
                         </div>
                         <DataTable :value="slotProps.data.individuals" size="small">
                             <Column header="物種">
@@ -171,7 +171,7 @@ import { getBehaviors } from '../../service/Behaviors'
 import { trieSearch } from '../../service/Species'
 import { getEvents } from '../../service/Events'
 import { review } from '../../service/Review'
-
+import { getVideoEndpoint } from '../../service/utils/video'
 import { me } from '../../service/Me'
 
 const toast = useToast()

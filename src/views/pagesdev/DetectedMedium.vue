@@ -5,7 +5,8 @@
         <div class="grid">
             <div class="col-6">
                 <Image v-if="medium.is_image" :src="medium.s3_path" alt="Image" width="100%" preview loading="lazy" />
-                <video v-if="!medium.is_image" :src="medium.s3_path" width="100%" loading="lazy" controls></video>
+                <video v-if="!medium.is_image" :src="getVideoEndpoint(medium.base32_path)" width="100%" loading="lazy"
+                    controls></video>
             </div>
             <div class="col-6">
                 <h6>AI 辨識物種</h6>
@@ -38,6 +39,8 @@ import { getProjectByID } from '../../service/Projects'
 import { getPerchMountByID } from '../../service/PerchMounts'
 import { getSectionByID } from '../../service/Sections'
 import { getDetectedMediumByID } from '../../service/DetectedMedia'
+
+import { getVideoEndpoint } from '../../service/utils/video'
 
 const route = useRoute()
 const project = ref({})
