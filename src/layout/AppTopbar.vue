@@ -72,7 +72,7 @@ const isOutsideClicked = (event) => {
 
 const signOutClicked = () => {
     signOut().then(data => {
-        window.location.replace("/auth/login")
+        window.location.reload("auth/login")
     }).catch(e => {
         toast.add({ severity: 'error', summary: '認領失敗', detail: e, life: 3000 });
     })
