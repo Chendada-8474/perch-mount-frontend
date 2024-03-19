@@ -27,16 +27,6 @@
             </div>
 
             <div class="flex flex-row flex-wrap">
-                <div>
-                    <RouterLink :to="emptyCheckPerchMountUrl(perchMount.perch_mount_id)">
-
-                        <Button label="去檢查空拍" severity="success" icon="pi pi-search"
-                            class="p-button-rounded p-button-sm m-2" />
-                    </RouterLink>
-                </div>
-                <RouterLink :to="reviewPerchMountUrl(perchMount.perch_mount_id)">
-                    <Button label="去檢視物種" severity="success" icon="pi pi-eye" class="p-button-rounded p-button-sm m-2" />
-                </RouterLink>
                 <div v-if="currentUser.is_admin">
                     <Button label="編輯棲架" severity="secondary" icon="pi pi-pencil" class="p-button-rounded p-button-sm m-2"
                         @click="perchMountEditVisible = true" />
@@ -59,19 +49,35 @@
             <div class="col-12 md:col-6">
                 <div class="grid m-4">
 
-                    <div class="col-12 md:col-6">
+                    <div class="col-12 md:col-4">
                         <Card>
-                            <template #title>待空拍檢查檔案</template>
                             <template #content>
-                                <p class="m-0">{{ numberEmpty }}</p>
+                                <p>已完成檔案</p>
+                                <h4 class="m-0">{{ numberMedia }}</h4>
                             </template>
                         </Card>
                     </div>
-                    <div class="col-12 md:col-6">
+                    <div class="col-12 md:col-4">
                         <Card>
-                            <template #title>待物種檢視檔案</template>
                             <template #content>
-                                <p class="m-0">{{ numberDetected }}</p>
+                                <p>待空拍檢查檔案</p>
+                                <h4 class="m-0">{{ numberEmpty }}</h4>
+                                <RouterLink :to="emptyCheckPerchMountUrl(perchMount.perch_mount_id)">
+                                    <Button label="去檢查空拍" severity="primary" icon="pi pi-search"
+                                        class="p-button p-button-sm mt-4" outlined />
+                                </RouterLink>
+                            </template>
+                        </Card>
+                    </div>
+                    <div class="col-12 md:col-4">
+                        <Card>
+                            <template #content>
+                                <p>待物種檢視檔案</p>
+                                <h4 class="m-0">{{ numberDetected }}</h4>
+                                <RouterLink :to="reviewPerchMountUrl(perchMount.perch_mount_id)">
+                                    <Button label="去檢視物種" severity="primary" icon="pi pi-eye"
+                                        class="p-button p-button-sm mt-4" outlined />
+                                </RouterLink>
                             </template>
                         </Card>
                     </div>
@@ -103,15 +109,23 @@
 
     <div class="card">
         <h5>Sections</h5>
+
         <DataTable :value="sections" v-model:expandedRows="expandedRows" dataKey="section_id" responsiveLayout="scroll">
             <Column :expander="true" headerStyle="min-width: 3rem" />
             <Column field="section_id" header="Section ID"></Column>
-            <Column field="check_date" header="Name" :sortable="true">
+            <Column field="check_date" header="回收日期" :sortable="true">
                 <template #body="slotProps">
                     <router-link :to="sectionUrl(perchMount.project, perchMount.perch_mount_id, slotProps.data.section_id)"
                         rel="noopener">
                         {{ slotProps.data.check_date }}
                     </router-link>
+                </template>
+            </Column>
+            <Column header="回收人員">
+                <template #body="slotProps">
+                    <p v-for="operator in slotProps.data.operators">
+                        {{ operators[operator].first_name }}
+                    </p>
                 </template>
             </Column>
             <Column header="空拍檢查">
@@ -139,6 +153,7 @@
                         class="p-button-secondary p-button-text mr-2 mb-2" />
                 </template>
             </Column>
+            <Column field="note" header="備註"></Column>
             <template #expansion="slotProps">
                 <div class="p-3">
 
@@ -156,13 +171,7 @@
                                 {{ cameras[slotProps.data.camera].model_name }}
                             </template>
                         </Column>
-                        <Column header="回收人員" class="surface-ground">
-                            <template #body="slotProps">
-                                <p v-for="operator in slotProps.data.operators">
-                                    {{ operators[operator].first_name }}
-                                </p>
-                            </template>
-                        </Column>
+
                         <Column field="note" header="備註" class="surface-ground"></Column>
                     </DataTable>
                 </div>
@@ -267,9 +276,10 @@ function refresh() {
         }
         for (const [section, count] of Object.entries(data.media)) {
             numberMedia.value += count
+            console.log(numberMedia.value)
         }
+        progressing.value = Math.round(100 * (numberMedia.value / (numberDetected.value + numberEmpty.value + numberMedia.value)))
     })
-    progressing.value = Math.round(100 * (numberMedia.value / (numberDetected.value + numberEmpty.value + numberMedia.value)))
 }
 
 function findPerchMount(data) {

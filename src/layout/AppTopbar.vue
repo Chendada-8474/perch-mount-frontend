@@ -3,9 +3,7 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast'
-import { storeToRefs } from 'pinia';
 
-import { me } from '../service/Me'
 import { signOut } from '../service/utils/login'
 import { useCurrentUser } from '../stores/currnetUser';
 

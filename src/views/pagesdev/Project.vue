@@ -7,7 +7,33 @@
             <Button v-if="currentUser.is_admin" label="新增棲架" @click="newPerchMount.visible = true" icon="pi pi-plus"
                 class="p-button p-button-sm m-2" />
         </div>
-        <p>頁面製作中...</p>
+        <div class="grid">
+            <div class="col-12 md:col-2">
+                <Card>
+                    <template #content>
+                        <p>運作中</p>
+                        <h4 class="m-0">{{ workingPerchMounts.length }}</h4>
+                    </template>
+                </Card>
+            </div>
+            <div class="col-12 md:col-2">
+                <Card>
+                    <template #content>
+                        <p>優先處裡</p>
+                        <h4 class="m-0">{{ numPriorityPerchMount }}</h4>
+                    </template>
+                </Card>
+            </div>
+            <div class="col-12 md:col-2">
+                <Card>
+                    <template #content>
+                        <p>已撤收</p>
+                        <h4 class="m-0">{{ terminatedPerchMounts.length }}</h4>
+                    </template>
+                </Card>
+            </div>
+        </div>
+
     </div>
     <div class="grid p-fluid mt-3">
         <div v-for="perchMount in workingPerchMounts" class="field col-12 md:col-3">
@@ -123,8 +149,8 @@ const toast = useToast()
 
 const currentUser = ref({})
 
-const terminatedPerchMounts = ref(null)
-const workingPerchMounts = ref(null)
+const terminatedPerchMounts = ref([])
+const workingPerchMounts = ref([])
 
 const projects = ref(null)
 const habitats = ref(null)
@@ -133,6 +159,7 @@ const members = ref(null)
 const breadcrumbHome = ref({});
 const breadcrumbItems = ref([]);
 
+const numPriorityPerchMount = ref(0)
 
 breadcrumbHome.value = { icon: 'pi pi-home', to: '/' }
 
@@ -149,10 +176,19 @@ function refresh() {
     })
     getPerchMounts(route.params.project_id).then((data) => {
         findResources(data)
+        countPerchmount(data)
     })
     getProjectByID(route.params.project_id).then((data) => {
         findBreadcrumb(data)
     })
+}
+
+function countPerchmount(perchMounts) {
+    for (const perchMount of perchMounts.perch_mounts) {
+        if (perchMount.is_priority) {
+            numPriorityPerchMount.value++
+        }
+    }
 }
 
 function findResources(perchMountsBody) {
