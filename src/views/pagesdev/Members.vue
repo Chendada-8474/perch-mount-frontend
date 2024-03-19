@@ -97,9 +97,7 @@ const memberEditor = ref({
     isAdmin: false,
 })
 
-getMembers().then((data) => {
-    members.value = data.members
-})
+refresh()
 
 getPositions().then((data) => {
     var options = []
@@ -108,6 +106,12 @@ getPositions().then((data) => {
     }
     positionOptions.value = options
 })
+
+function refresh() {
+    getMembers().then((data) => {
+        members.value = data.members
+    })
+}
 
 function addMemberClicked() {
     if (!isNewMemberValid()) {
@@ -123,7 +127,7 @@ function addMemberClicked() {
         is_admin: memberEditor.value.isAdmin,
     }).then((data) => {
         toast.add({ severity: 'success', summary: '成員新增成功', detail: newPerchMount.value.perchMountName, life: 3000 })
-        refreshPerchMount()
+        refresh()
     }).catch((e) => {
         toast.add({ severity: 'error', summary: '成員新增失敗', detail: e, life: 3000 })
     })
