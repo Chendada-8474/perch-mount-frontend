@@ -5,3 +5,9 @@ export function getCameras() {
     return fetchWithloginCheck(url, "GET")
 
 }
+
+
+export function addCamera(data) {
+    const url = `${window.BACKEND_HOST}/cameras/`
+    return fetchWithloginCheck(url, "POST", data)
+}

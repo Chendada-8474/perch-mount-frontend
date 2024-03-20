@@ -18,6 +18,11 @@
                     <i class="pi" :class="{ 'pi-check-circle text-green-500': data.is_admin }"></i>
                 </template>
             </Column>
+            <Column v-if="currentUser.is_super_admin">
+                <template #body="{ data }">
+                    <Button icon="pi pi-pencil" severity="secondary" text />
+                </template>
+            </Column>
         </DataTable>
     </div>
     <Dialog v-model:visible="memberEditor.visible" modal header="新增成員" :style="{ width: '30rem' }">
@@ -126,7 +131,7 @@ function addMemberClicked() {
         phone_number: memberEditor.value.phoneNumber,
         is_admin: memberEditor.value.isAdmin,
     }).then((data) => {
-        toast.add({ severity: 'success', summary: '成員新增成功', detail: newPerchMount.value.perchMountName, life: 3000 })
+        toast.add({ severity: 'success', summary: '成員新增成功', detail: memberEditor.value.userName, life: 3000 })
         refresh()
     }).catch((e) => {
         toast.add({ severity: 'error', summary: '成員新增失敗', detail: e, life: 3000 })

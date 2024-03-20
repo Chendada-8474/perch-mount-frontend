@@ -99,7 +99,8 @@
     </div>
 
 
-    <Dialog v-model:visible="perchMountEditor.visible" modal header="Edit Profile" :style="{ width: '50rem' }">
+    <Dialog v-if="currentUser.is_admin" v-model:visible="perchMountEditor.visible" modal header="Edit Profile"
+        :style="{ width: '50rem' }">
         <template #header>
             <div class="inline-flex align-items-center justify-content-center gap-2">
                 <span class="font-bold white-space-nowrap">{{ perchMountEditor.perchMountName }}</span>
