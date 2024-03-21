@@ -3,6 +3,7 @@ export function loginRequest(username, phonenumber) {
     return fetch(endPoint.href, {
         method: "POST",
         credentials: "include",
+        withCredentials: true,
         body: JSON.stringify({
             username: username,
             phone_number: phonenumber,
