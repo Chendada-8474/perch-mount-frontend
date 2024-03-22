@@ -26,7 +26,7 @@ export function loginRequest(username, phonenumber) {
 
 
 export function signOut() {
-    var endPoint = new URL(`${import.meta.env.VITE_BACKEND_HOST}/logout`)
+    var endPoint = new URL(`${window.BACKEND_HOST}/logout`)
     return fetch(endPoint.href, {
         method: "DELETE",
         headers: {
