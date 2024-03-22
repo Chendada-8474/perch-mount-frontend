@@ -1,11 +1,18 @@
 
 export function fetchWithloginCheck(endPoint, method, data) {
+
+    const token = window.localStorage.getItem("token")
+
+    if (!token) {
+        window.location.replace("/#/auth/login")
+    }
+
     return fetch(endPoint, {
         method: method,
-        credentials: "include",
         body: JSON.stringify(data),
         headers: {
             "content-type": "application/json",
+            "Authorization": `Bearer ${token}`
         },
     })
         .then((res) => {

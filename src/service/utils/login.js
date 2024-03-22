@@ -2,8 +2,6 @@ export function loginRequest(username, phonenumber) {
     var endPoint = new URL(`${window.BACKEND_HOST}/login`)
     return fetch(endPoint.href, {
         method: "POST",
-        credentials: "include",
-        withCredentials: true,
         body: JSON.stringify({
             username: username,
             phone_number: phonenumber,
@@ -21,15 +19,20 @@ export function loginRequest(username, phonenumber) {
             throw new Error(errorMsg);
         });
     })
-        .then((d) => d)
+        .then(d => {
+            window.localStorage.setItem("token", d.token)
+        })
 }
 
 
 export function signOut() {
     var endPoint = new URL(`${import.meta.env.VITE_BACKEND_HOST}/logout`)
     return fetch(endPoint.href, {
-        method: "POST",
-        credentials: "include",
+        method: "DELETE",
+        headers: {
+            "content-type": "application/json",
+            "Authorization": `Bearer ${window.localStorage.getItem("token")}`
+        },
     }).then((res) => {
 
         if (res.ok) {

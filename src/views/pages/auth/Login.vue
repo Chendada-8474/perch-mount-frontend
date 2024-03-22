@@ -13,9 +13,7 @@ const phoneNumber = ref('');
 function login() {
     loginRequest(userName.value, phoneNumber.value)
         .then(data => {
-            if (data.login) {
-                window.location.replace("/")
-            }
+            window.location.replace("/")
         }).catch(e => {
             toast.add({ severity: 'error', summary: '登入失敗', detail: e, life: 3000 })
         })
