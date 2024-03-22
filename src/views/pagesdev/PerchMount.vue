@@ -153,7 +153,7 @@
                         class="p-button-secondary p-button-text mr-2 mb-2" />
                 </template>
             </Column>
-            <Column field="note" header="備註"></Column>
+            <Column field="note" header="備註" style="max-width: 10rem;"></Column>
             <template #expansion="slotProps">
                 <div class="p-3">
 
