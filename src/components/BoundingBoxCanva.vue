@@ -56,7 +56,6 @@ onMounted(() => {
 })
 
 watch(() => {
-    console.log(individuals.value)
     for (const individual of individuals.value) {
         individual.boxStyle = individualBoxStyle(individual.xmin, individual.xmax, individual.ymin, individual.ymax)
     }
