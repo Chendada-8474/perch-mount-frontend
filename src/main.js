@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
 import { createPinia } from 'pinia'
+import { createVCodeBlock } from '@wdns/vue-code-block'
 
 import PrimeVue from 'primevue/config';
 import AutoComplete from 'primevue/autocomplete';
@@ -111,6 +112,7 @@ import "vue3-openlayers/styles.css";
 
 const app = createApp(App);
 const pinia = createPinia();
+const VCodeBlock = createVCodeBlock();
 
 app.use(router);
 app.use(pinia);
@@ -119,6 +121,7 @@ app.use(ToastService);
 app.use(DialogService);
 app.use(ConfirmationService);
 
+app.use(VCodeBlock);
 app.use(OpenLayersMap);
 
 app.directive('tooltip', Tooltip);
