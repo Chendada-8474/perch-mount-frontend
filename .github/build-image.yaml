@@ -1,0 +1,30 @@
+name: Build Image on Runner
+
+on:
+  push:
+    tags:
+      -'*'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        script: |
+          cd ~/perch-mount/perch-mount-frontend
+          git checkout $GITHUB_REF_NAME
+          podman build -f ContainerFile -t docker.io/chendada8474/perch-mount-frontend .
+          podman login -v docker.io -p $secrets.DOCKER_IO_PW -u $secrets.DOCKER_IO_USER
+          podman push docker.io/chendada8474/perch-mount-frontend:$GITHUB_REF_NAME
+
