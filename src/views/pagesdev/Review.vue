@@ -46,7 +46,7 @@
 
                         <div class="text-center">
                             <Image v-if="slotProps.data.is_image" :src="slotProps.data.s3_path" alt="Image" width="100%"
-                                preview loading="lazy" />
+                                preview />
                             <video v-if="!slotProps.data.is_image" :src="getVideoEndpoint(slotProps.data.base32_path)"
                                 width="100%" loading="lazy" controls></video>
                         </div>
