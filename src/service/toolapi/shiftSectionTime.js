@@ -1,6 +1,10 @@
-import { fetchWithloginCheck } from "./utils/api"
+import { fetchWithloginCheck } from "../utils/api"
 
 export function shiftSectionTime(sectionID, newStartTime) {
-    const url = `${window.BACKEND_HOST}/shift_time?section_id=${sectionID}&new_start_time=${newStartTime}`
-    return fetchWithloginCheck(url, "PATCH")
+    var endPoint = new URL(`${window.BACKEND_HOST}/shift_time/`)
+    var params = new URLSearchParams()
+    params.append('section_id', sectionID)
+    params.append('new_start_time', newStartTime)
+    endPoint.search = params
+    return fetchWithloginCheck(endPoint, "PATCH")
 }

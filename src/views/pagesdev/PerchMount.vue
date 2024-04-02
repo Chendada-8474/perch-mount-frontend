@@ -279,7 +279,6 @@ function refresh() {
         }
         for (const [section, count] of Object.entries(data.media)) {
             numberMedia.value += count
-            console.log(numberMedia.value)
         }
         progressing.value = Math.round(100 * (numberMedia.value / (numberDetected.value + numberEmpty.value + numberMedia.value)))
     })

@@ -92,11 +92,27 @@
             </TabPanel>
         </TabView>
     </div>
+
+    <Dialog v-model:visible="timeShiftEditor.visible" modal header="請選擇新的開始時間" :style="{ width: '20rem' }">
+        <div class="gird">
+            <div class="col-12 flex flex-column gap-2">
+                <label for="start_time">開始時間</label>
+                <Calendar id="start_time" v-model="timeShiftEditor.newStartTime" showTime hourFormat="24" @date-select=""
+                    aria-describedby="start-time-help" />
+            </div>
+        </div>
+        <template #footer>
+            <Button label="Cancel" severity="secondary" @click="timeShiftEditor.visible = false" autofocus />
+            <Button label="Save" severity="primary" @click="shiftSectionTimeClicked" autofocus />
+        </template>
+    </Dialog>
+    <Toast />
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { useToast } from 'primevue/usetoast'
 import moment from 'moment'
 
 import { getProjectByID } from '../../service/Projects'
@@ -105,7 +121,10 @@ import { getSectionByID } from '../../service/Sections'
 import { getMedia } from '../../service/Media'
 import { getDetectedMedia } from '../../service/DetectedMedia'
 import { getEmptyMedia } from '../../service/EmptyMedia'
+import { shiftSectionTime } from '../../service/toolapi/shiftSectionTime'
+import Toast from 'primevue/toast'
 
+const toast = useToast()
 const route = useRoute()
 
 const breadcrumbHome = ref()
@@ -121,6 +140,11 @@ const detectedMedia = ref([])
 const emptyMedia = ref([])
 const expandedRowGroups = ref()
 
+const timeShiftEditor = ref({
+    visible: false,
+    newStartTime: null
+})
+
 breadcrumbHome.value = { icon: 'pi pi-home', to: '/' }
 const projectUrl = `/projects/${route.params.project_id}`
 const perchMountUrl = `${projectUrl}/perch_mounts/${route.params.perch_mount_id}`
@@ -135,7 +159,7 @@ const editItems = ref([
     {
         label: 'Shift Time',
         command: () => {
-            this.$toast.add({ severity: 'success', summary: 'Updated', detail: 'Data Updated', life: 3000 });
+            timeShiftEditor.value.visible = true
         }
     },
 ])
@@ -198,5 +222,18 @@ function emptyMediumUrl(project, perchMount, sectionID, emptyMediumID) {
     return `/projects/${project}/perch_mounts/${perchMount}/sections/${sectionID}/empty_media/${emptyMediumID}`
 }
 
+
+function shiftSectionTimeClicked() {
+    if (!timeShiftEditor.value.newStartTime) {
+        toast.add({ severity: 'warn', summary: '還沒填時間欸', life: 3000 });
+        return
+    }
+    console.log(timeShiftEditor.value.newStartTime.toISOString())
+    shiftSectionTime(route.params.section_id, timeShiftEditor.value.newStartTime.toISOString()).then(data => {
+        toast.add({ severity: 'success', summary: '時間變更成功', detail: `新的開始時間：${timeShiftEditor.value.newStartTime}`, life: 3000 });
+    }).catch(e => {
+        toast.add({ severity: 'error', summary: '變更失敗', detail: e, life: 3000 });
+    })
+}
 
 </script>
