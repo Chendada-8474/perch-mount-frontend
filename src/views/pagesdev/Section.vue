@@ -1,7 +1,10 @@
 <template>
     <Breadcrumb :home="breadcrumbHome" :model="breadcrumbItems" class="mb-4" />
     <div className="card">
-        <h5>Section {{ section.check_date }}</h5>
+        <div class="flex justify-content-between flex-wrap mb-4">
+            <h5>Section {{ section.check_date }}</h5>
+            <SplitButton label="編輯" :model="editItems" />
+        </div>
         <div class="grid">
             <div class="col-12 md:col-4">
                 <p><span class="font-bold">Section ID：</span>{{ section.section_id }}</p>
@@ -127,6 +130,15 @@ breadcrumbItems.value = [
     { label: null, to: perchMountUrl },
     { label: null, to: sectionUrl },
 ]
+
+const editItems = ref([
+    {
+        label: 'Shift Time',
+        command: () => {
+            this.$toast.add({ severity: 'success', summary: 'Updated', detail: 'Data Updated', life: 3000 });
+        }
+    },
+])
 
 getProjectByID(route.params.project_id).then((data) => {
     project.value = data

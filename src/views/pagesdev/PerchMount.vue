@@ -202,7 +202,7 @@
 
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
 import Location from '../../components/Location.vue'
@@ -248,8 +248,11 @@ const perchMountEditVisible = ref(false)
 
 const progressing = ref(0)
 
-refresh()
 breadcrumbHome.value = { icon: 'pi pi-home', to: '/' }
+
+onMounted(() => {
+    refresh()
+})
 
 function refresh() {
     me().then(data => {

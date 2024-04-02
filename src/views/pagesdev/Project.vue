@@ -135,7 +135,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router'
 import { useToast } from 'primevue/usetoast';
 import PerchMountEditer from '../../components/PerchMountEditer.vue'
@@ -164,7 +164,9 @@ const numPriorityPerchMount = ref(0)
 
 breadcrumbHome.value = { icon: 'pi pi-home', to: '/' }
 
-refresh()
+onMounted(() => {
+    refresh()
+})
 
 watch(() => {
     refresh()
