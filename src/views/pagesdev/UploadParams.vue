@@ -9,12 +9,13 @@
                     <div class="col-4 flex flex-column gap-2">
                         <label for="perch_mount_id">棲架</label>
                         <Dropdown id="perch_mount_id" editable v-model="params.perchMount" :options="perchMountOptions"
+                            :filter="true" filterMatchMode="contains" :filterFields="['name', 'code']"
                             optionLabel="name" placeholder="Select a Perch Mount" @change="editorChanged" />
                     </div>
                     <div class="col-4 flex flex-column gap-2">
                         <label for="valid">是否有效</label>
-                        <ToggleButton id="valid" v-model="params.valid" onIcon="pi pi-check" offIcon="pi pi-times" invalid
-                            class="w-full sm:w-10rem" aria-label="Confirmation" @change="editorChanged" />
+                        <ToggleButton id="valid" v-model="params.valid" onIcon="pi pi-check" offIcon="pi pi-times"
+                            invalid class="w-full sm:w-10rem" aria-label="Confirmation" @change="editorChanged" />
 
                     </div>
                 </div>
@@ -111,7 +112,13 @@ paramString.value = getParamString(params.value)
 
 getPerchMounts().then(data => {
     for (const perchMount of data.perch_mounts) {
-        perchMountOptions.value.push({ name: perchMount.perch_mount_name, code: perchMount.perch_mount_id, projectID: perchMount.project })
+        perchMountOptions.value.push({
+            name: `${perchMount.perch_mount_name}`,
+            // name: `${perchMount.perch_mount_id}. ${perchMount.perch_mount_name}`,
+            perchMountName: perchMount.perch_mount_name,
+            code: perchMount.perch_mount_id,
+            projectID: perchMount.project,
+        })
     }
     projectMap.value = data.projects
 })
@@ -136,9 +143,9 @@ getMembers().then(data => {
 
 function getParamString(params) {
 
-    var perchMountName = (params.perchMount) ? params.perchMount.name : "<未選擇棲架>"
+    var perchMountName = (params.perchMount) ? params.perchMount.perchMountName : "<未選擇棲架>"
     var perchMountID = (params.perchMount) ? params.perchMount.code : "<未選擇棲架>"
-    var projectName = (params.perchMount) ? projectMap.value[params.perchMount.projectID].name : ""
+    var projectName = (params.perchMount && projectMap.value[params.perchMount.projectID]) ? projectMap.value[params.perchMount.projectID].name : ""
     var checkDate = (params.checkDate) ? moment(params.checkDate).format('YYYY-MM-DD') : ""
     var cameraID = (params.camera) ? params.camera.code : ""
     var modelName = (params.camera) ? params.camera.name : ""
