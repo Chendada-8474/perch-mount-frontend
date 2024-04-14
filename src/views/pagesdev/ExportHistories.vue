@@ -31,7 +31,7 @@ onMounted(() => {
 })
 
 function getExportDataUrl(fileName) {
-    return `${window.S3_HOST}/dataexport/${fileName}`
+    return `${window.S3_HOST}/${window.DATA_EXPORT_BUCKET}/${fileName}`
 }
 
 </script>
