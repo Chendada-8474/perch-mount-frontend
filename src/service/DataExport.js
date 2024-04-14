@@ -18,11 +18,11 @@ export function dataExport(
     }
     var params = new URLSearchParams()
 
-    if (!projectIDs) {
+    if (projectIDs) {
         params.append("project_ids", projectIDs.join(','))
     }
 
-    if (!perchMountIDs) {
+    if (perchMountIDs) {
         params.append("perch_mount_ids", perchMountIDs.join(','))
     }
 
@@ -39,19 +39,28 @@ export function dataExport(
         params.append("prey", prey)
     }
 
-    if (!taxonOrdersByHuman) {
+    if (taxonOrdersByHuman) {
         params.append("taxon_orders_by_human", taxonOrdersByHuman.join(','))
     }
 
-    if (!taxonOrdersByAI) {
+    if (taxonOrdersByAI) {
         params.append("taxon_orders_by_ai", taxonOrdersByAI.join(','))
     }
 
     if (unreviewedData) {
         params.append("unreviewed_data", unreviewedData)
     }
-
     endPoint.search = params
 
-    return fetchWithloginCheck(endPoint, "GET")
+    return fetchWithloginCheck(endPoint.href, "GET")
+}
+
+
+
+export function getExportHistoriesByExportor(exportor) {
+    var endPoint = new URL(`${window.BACKEND_HOST}/export_histories/`)
+    var params = new URLSearchParams()
+    params.append('exportor', exportor)
+    endPoint.search = params
+    return fetchWithloginCheck(endPoint.href, "GET")
 }

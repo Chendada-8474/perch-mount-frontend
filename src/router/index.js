@@ -109,7 +109,11 @@ const router = createRouter({
                 },
                 {
                     path: '/me',
-                    component: () => import('@/views/pagesdev/Me.vue')
+                    component: () => import('@/views/pagesdev/Me.vue'),
+                },
+                {
+                    path: '/me/export_histories',
+                    component: () => import('@/views/pagesdev/ExportHistories.vue')
                 },
 
                 {
