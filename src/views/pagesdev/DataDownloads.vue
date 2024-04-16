@@ -221,8 +221,8 @@ function exportClicked() {
     dataExport(
         conditions.value.projects,
         conditions.value.perchMounts,
-        conditions.value.startTime,
-        conditions.value.endTime,
+        dateToISOString(conditions.value.startTime),
+        dateToISOString(conditions.value.endTime),
         conditions.value.prey,
         conditions.value.taxonOrdersByHuman,
         conditions.value.taxonOrdersByAI,
@@ -240,12 +240,12 @@ function searchClicked() {
         toast.add({ severity: 'warn', summary: '搜尋失敗', detail: '請至少輸入一個搜尋條件', life: 3000 })
         return
     }
-
+    console.log(dateToISOString(conditions.value.startTime))
     dataExport(
         conditions.value.projects,
         conditions.value.perchMounts,
-        conditions.value.startTime,
-        conditions.value.endTime,
+        dateToISOString(conditions.value.startTime),
+        dateToISOString(conditions.value.endTime),
         conditions.value.prey,
         conditions.value.taxonOrdersByHuman,
         conditions.value.taxonOrdersByAI,
@@ -290,6 +290,10 @@ function isAnyCondition() {
     conditions.value.prey ||
     conditions.value.taxonOrdersByHuman.length > 0 ||
     conditions.value.taxonOrdersByAI.length > 0
+}
+
+function dateToISOString(date) {
+    return moment(date).add(8, 'hours').toISOString()
 }
 
 </script>
