@@ -1,5 +1,6 @@
 import { fetchWithloginCheck } from "./utils/api"
 
+
 export function getPerchMounts(project = null, habitat = null, terminated = null, claim_by = null) {
 
     var endPoint = new URL(`${window.BACKEND_HOST}/perch_mounts/`)
@@ -45,4 +46,14 @@ export function getMediaCount(perchMountID) {
 export function getPerchMountPending() {
     var endPoint = new URL(`${window.BACKEND_HOST}/perch_mounts/pending`)
     return fetchWithloginCheck(endPoint.href, "GET")
+}
+
+export function claimPerchMount(perchMountID, memberID) {
+    var endPoint = new URL(`${window.BACKEND_HOST}/perch_mounts/${perchMountID}/`)
+    return fetchWithloginCheck(endPoint.href, "PATCH", { claim_by: memberID })
+}
+
+export function cancelClaimPerchMount(perchMountID) {
+    var endPoint = new URL(`${window.BACKEND_HOST}/perch_mounts/${perchMountID}/`)
+    return fetchWithloginCheck(endPoint.href, "PATCH", { claim_by: null })
 }
