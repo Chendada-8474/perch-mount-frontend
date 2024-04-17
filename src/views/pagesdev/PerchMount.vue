@@ -32,8 +32,20 @@
                         @click="perchMountEditVisible = true" />
                 </div>
                 <div>
-                    <Button label="認領" severity="warning" icon="pi pi-check" class="p-button-rounded p-button-sm  m-2"
-                        @click="claim" />
+                    <Button v-if="currentUser.user_id == perchMount.claim_by"
+                        label="取消認領"
+                        severity="warning"
+                        icon="pi pi-times"
+                        class="p-button-rounded p-button-sm m-2"
+                        @click="cancleClaim"
+                    />
+                    <Button v-else-if="perchMount.claim_by == null"
+                        label="認領"
+                        severity="warning"
+                        icon="pi pi-check"
+                        class="p-button-rounded p-button-sm m-2"
+                        @click="claim"
+                    />
                 </div>
                 <div v-if="currentUser.is_admin">
                     <Button v-if="!perchMount.terminated" label="撤收棲架" severity="help" icon="pi pi-ban"
@@ -208,7 +220,7 @@ import { useToast } from 'primevue/usetoast'
 import Location from '../../components/Location.vue'
 import PerchMountEditer from '../../components/PerchMountEditer.vue'
 
-import { getPerchMountByID, getMediaCount, updatePerchMountByID } from '../../service/PerchMounts'
+import { getPerchMountByID, getMediaCount, updatePerchMountByID, cancelClaimPerchMount } from '../../service/PerchMounts'
 import { getSections } from '../../service/Sections'
 
 import { me } from '../../service/Me'
@@ -340,6 +352,17 @@ function reviewPerchMountUrl(perchMountID) {
 
 function emptyCheckPerchMountUrl(perchMountID) {
     return `/empty_check?perch_mount=${perchMountID}`
+}
+
+function cancleClaim() {
+    cancelClaimPerchMount(perchMount.value.perch_mount_id)
+    .then(data => {
+        toast.add({ severity: 'success', summary: '取消成功', detail: perchMount.value.perch_mount_name, life: 3000 });
+        refresh()
+    })
+    .catch(e => {
+        toast.add({ severity: 'error', summary: '取消失敗', life: 3000 });
+    })
 }
 
 </script>
