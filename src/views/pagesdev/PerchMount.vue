@@ -356,13 +356,13 @@ function emptyCheckPerchMountUrl(perchMountID) {
 
 function cancleClaim() {
     cancelClaimPerchMount(perchMount.value.perch_mount_id)
-    .then(data => {
-        toast.add({ severity: 'success', summary: '取消成功', detail: perchMount.value.perch_mount_name, life: 3000 });
-        refresh()
-    })
-    .catch(e => {
-        toast.add({ severity: 'error', summary: '取消失敗', life: 3000 });
-    })
+        .then(data => {
+            toast.add({ severity: 'success', summary: '取消成功', detail: perchMount.value.perch_mount_name, life: 3000 });
+            refresh()
+        })
+        .catch(e => {
+            toast.add({ severity: 'error', summary: '取消失敗', life: 3000 });
+        })
 }
 
 </script>
