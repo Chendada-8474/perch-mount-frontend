@@ -9,7 +9,7 @@
                 <template #title>
                     <div class="flex justify-content-between flex-wrap">
                         <p>計畫</p>
-                        <Button type="button" label="新增" icon="pi pi-plus" @click="projectEditer.visible = true" />
+                        <Button v-if="currentUser.is_admin" type="button" label="新增" icon="pi pi-plus" @click="projectEditer.visible = true" />
                     </div>
                 </template>
                 <template #content>
@@ -39,12 +39,16 @@
 </template>
 <script setup>
 import { ref, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useToast } from 'primevue/usetoast'
+
+import { useCurrentUser } from '../stores/currnetUser';
 import { getProjects, addProject } from '../service/Projects.js'
 
 const projects = ref([])
 const toast = useToast()
 
+const currentUser = storeToRefs(useCurrentUser())
 
 const projectEditer = ref({
     visible: false,
