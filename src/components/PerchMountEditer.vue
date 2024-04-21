@@ -43,7 +43,7 @@
 
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted, defineExpose } from 'vue'
 
 import Location from './Location.vue'
 
@@ -67,10 +67,12 @@ const props = defineProps({
     perchMountID: { type: Number, default: null },
 })
 
-watch(() => {
+
+onMounted(() => {
     getPerchMountByID(props.perchMountID).then((data) => {
         findPerchMountEditer(data)
     })
+
 })
 
 
@@ -119,6 +121,13 @@ function editorChanged() {
     emit("changed", perchMountEditer.value)
 }
 
+function getEditorPerchMount() {
+    return perchMountEditer.value
+}
+
+defineExpose({
+    getEditorPerchMount
+})
 
 
 </script>

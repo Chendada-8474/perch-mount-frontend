@@ -200,7 +200,7 @@
             </div>
         </template>
 
-        <PerchMountEditer @changed="editorChanged" :perchMountID="perchMount.perch_mount_id">
+        <PerchMountEditer @changed="editorChanged" :perchMountID="perchMount.perch_mount_id" ref="perchMountEditer">
         </PerchMountEditer>
 
         <template #footer>
@@ -257,6 +257,7 @@ const mountTypes = ref({})
 const expandedRows = ref([]);
 
 const perchMountEditVisible = ref(false)
+const perchMountEditer = ref(null)
 
 const progressing = ref(0)
 
@@ -315,6 +316,20 @@ function findSection(data) {
 }
 
 function updatePerchMount() {
+    const updatingPerchMount = perchMountEditer.value.getEditorPerchMount()
+    updatePerchMountByID(perchMount.value.perch_mount_id, {
+        "latitude": updatingPerchMount.latitude,
+        "longitude": updatingPerchMount.longitude,
+        "project": updatingPerchMount.project,
+        "habitat": updatingPerchMount.habitat,
+        "layer": updatingPerchMount.layer,
+        "claim_by": updatingPerchMount.claimBy,
+    }).then(data => {
+        toast.add({ severity: 'success', summary: '變更成功', detail: perchMount.perchMountName, life: 3000 });
+        refresh()
+    }).catch(e => {
+        toast.add({ severity: 'error', summary: '變更失敗', detail: e, life: 3000 });
+    })
     perchMountEditVisible.value = false
 }
 
