@@ -3,7 +3,8 @@ import AppConfig from '@/layout/AppConfig.vue';
 </script>
 
 <template>
-    <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
+    <img src="../../assets/images/NotFound.png" alt="">
+    <!-- <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
         <div class="flex flex-column align-items-center justify-content-center">
             <img src="/demo/images/notfound/logo-blue.svg" alt="Sakai logo" class="mb-5 w-6rem flex-shrink-0" />
             <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, rgba(33, 150, 243, 0.4) 10%, rgba(33, 150, 243, 0) 30%)">
@@ -42,5 +43,10 @@ import AppConfig from '@/layout/AppConfig.vue';
             </div>
         </div>
     </div>
-    <AppConfig simple />
+    <AppConfig simple /> -->
 </template>
+<style>
+img {
+    width: 100%;
+}
+</style>
