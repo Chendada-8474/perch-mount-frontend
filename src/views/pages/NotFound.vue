@@ -1,9 +1,7 @@
-<script setup>
-import AppConfig from '@/layout/AppConfig.vue';
-</script>
-
 <template>
-    <img src="../../assets/images/NotFound.png" alt="">
+    <div style="height: 100%; widows: 100%; background-color: black;">
+        <img src="../../assets/images/NotFound.png" alt="">
+    </div>
     <!-- <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
         <div class="flex flex-column align-items-center justify-content-center">
             <img src="/demo/images/notfound/logo-blue.svg" alt="Sakai logo" class="mb-5 w-6rem flex-shrink-0" />
