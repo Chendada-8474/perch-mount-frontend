@@ -12,7 +12,7 @@
 
             <template #grid="slotProps">
                 <div class="col-12 md:col-4">
-                    <div class="card m-3 "
+                    <div class="card m-3"
                         :class="(slotProps.data.error) ? 'border-red-500 border-3' : 'surface-border border-1'">
                         <div class="grid grid-nogutter">
                             <div class="col-6 text-left">
