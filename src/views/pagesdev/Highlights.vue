@@ -5,19 +5,19 @@
         <div class="field grid">
             <div class="field col">
                 <label for="firstname2">物種（中文俗名）</label>
-                <Dropdown v-model="mediafilter.taxonOrder" :options="speciesOptions" filter optionLabel="name" class="w-full" />
+                <Dropdown v-model="mediafilter.taxonOrder" :options="speciesOptions" showClear filter optionLabel="name" class="w-full" />
             </div>
             <div class="field col">
                 <label for="firstname2">棲架</label>
-                <Dropdown v-model="mediafilter.perchMountID" :options="perchMountOptions" filter optionLabel="name" class="w-full" />
+                <Dropdown v-model="mediafilter.perchMountID" :options="perchMountOptions" showClear filter optionLabel="name" class="w-full" />
             </div>
             <div class="field col">
                 <label for="firstname2">精選行為</label>
-                <Dropdown v-model="mediafilter.behaviorID" :options="behaviorOptions" filter optionLabel="name" class="w-full" />
+                <Dropdown v-model="mediafilter.behaviorID" :options="behaviorOptions" showClear filter optionLabel="name" class="w-full" />
             </div>
             <div class="field col">
                 <label for="firstname2">誰選的</label>
-                <Dropdown v-model="mediafilter.memberID" :options="memberOptions" filter optionLabel="name" class="w-full" />
+                <Dropdown v-model="mediafilter.memberID" :options="memberOptions" showClear filter optionLabel="name" class="w-full" />
             </div>
             <div class="field col">
                 <label for="firstname2">時間</label>
@@ -32,8 +32,9 @@
             <template #header>
                 <div class="grid grid-nogutter">
                     <div class="col-6 text-left"></div>
-                    <div class="col-6 text-right">
-                        <DataViewLayoutOptions v-model="layout" />
+                    <div class="col-6 flex flex-row-reverse flex-wrap">
+                        <DataViewLayoutOptions v-model="layout" class="m-1"/>
+                        <Dropdown v-model="mediafilter.limit" :options="limitOptions" optionLabel="name" class="m-1"/>
                     </div>
                 </div>
             </template>
@@ -75,14 +76,17 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 
-import { getMedia } from '../../service/Media'
+import { getMediaByFeature } from '../../service/Media'
 import { getBehaviors } from '../../service/Behaviors'
 import { getMembers } from '../../service/Members'
 import { getSpecies } from '../../service/Species'
 import { getPerchMounts } from '../../service/Perchmounts'
 import { getVideoEndpoint } from '../../service/utils/video'
+import Dropdown from 'primevue/dropdown'
 
 const layout = ref('grid');
+
+const total = ref(0)
 
 const members = ref([])
 const species = ref([])
@@ -94,6 +98,11 @@ const speciesOptions = ref([])
 const perchMountOptions = ref([])
 const behaviorOptions = ref([])
 const memberOptions = ref([])
+const limitOptions = ref([
+    {code: 10, name: 10},
+    {code: 50, name: 50},
+    {code: 100, name: 100},
+])
 
 const mediafilter = ref({
     taxonOrder: {},
@@ -102,7 +111,7 @@ const mediafilter = ref({
     memberID: {},
     dateRange: "",
     offset: 0,
-    limit: 50,
+    limit: {"code": 50},
 })
 
 onMounted(() => {
@@ -133,12 +142,28 @@ function findOptions(options, nameColumnName, codeColumnName, data) {
 }
 
 
-function searchMedia() {
-    getMedia().then(data => {
-        media.value = data.media
-        console.log(media.value)
-    })
-}
+function searchMedia(page) {
 
+    var taxonOrder = mediafilter.value.taxonOrder
+    var perchMountID = mediafilter.value.perchMountID
+    var behaviorID = mediafilter.value.behaviorID
+    var memberID = mediafilter.value.memberID
+    var limit = mediafilter.value.limit
+
+    getMediaByFeature(
+        (taxonOrder) ? taxonOrder.code : null,
+        (perchMountID) ? perchMountID.code : null,
+        (behaviorID) ? behaviorID.code : null,
+        (memberID) ? memberID.code : null,
+        mediafilter.value.dateRange[0],
+        mediafilter.value.dateRange[1],
+        page.value,
+        (limit) ? limit.code : null,
+    ).then(data => {
+        media.value = data.media
+        total.value = data.total
+    })
+
+}
 
 </script>
