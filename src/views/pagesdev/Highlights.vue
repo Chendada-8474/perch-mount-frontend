@@ -45,23 +45,20 @@
                 <div class="col-12 md:col-4">
                     <div class="card m-3">
                         <div class="grid grid-nogutter">
-                            <div class="grid grid-nogutter">
-                                <div class="col-6 text-left">
-                                    <div class="flex align-items-center">
+                            <div class="col-6 text-left">
 
-                                    </div>
-                                </div>
-                                <div class="col-6 text-right">
-
-                                    <Button icon="pi pi-pencil" @click="optionEditer(slotProps.index)"
-                                        class="p-button-rounded p-button-secondary p-button-text mr-2 mb-2" />
-                                </div>
                             </div>
+                            <div class="col-6 text-right">
+                                <Button icon="pi pi-download" @click="downloadMeida(slotProps.data.s3_path)"
+                                    class="p-button-rounded p-button-secondary p-button-text" />
+                            </div>
+                        </div>
+                        <div class="grid grid-nogutter">
                             <div class="text-center">
                                 <Image v-if="slotProps.data.is_image" :src="slotProps.data.s3_path" alt="Image" width="100%"
-                                    preview />
+                                preview />
                                 <video v-if="!slotProps.data.is_image" :src="getVideoEndpoint(slotProps.data.base32_path)"
-                                    width="100%" loading="lazy" controls></video>
+                                width="100%" loading="lazy" controls></video>
                             </div>
                         </div>
                     </div>
@@ -174,6 +171,10 @@ function searchMedia(offset = 0) {
 function selectPage(state) {
     limit.value = state.rows
     searchMedia(state.first)
+}
+
+function downloadMeida(url) {
+    window.open(url, '_blank')
 }
 
 </script>
