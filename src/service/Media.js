@@ -61,15 +61,15 @@ export function getMediaByFeature(
     }
 
     if (featureBehavior != null) {
-        params.append("feature_behavior", featureBehavior)
+        params.append("featured_behavior", featureBehavior)
     }
 
     if (featureBehavior != null) {
-        params.append("feature_behavior", featureBehavior)
+        params.append("featured_behavior", featureBehavior)
     }
 
     if (featureBy != null) {
-        params.append("feature_by", featureBy)
+        params.append("featured_by", featureBy)
     }
     endPoint.search = params
     return fetchWithloginCheck(endPoint.href, "GET")

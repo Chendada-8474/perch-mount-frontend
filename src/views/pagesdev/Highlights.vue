@@ -21,7 +21,7 @@
             </div>
             <div class="field col">
                 <label for="firstname2">時間</label>
-                <Calendar v-model="mediafilter.dateRange" selectionMode="range" :manualInput="false" class="w-full" />
+                <Calendar v-model="mediafilter.dateRange" selectionMode="range" showButtonBar :manualInput="false" class="w-full" />
             </div>
         </div>
         <Button icon="pi pi-filter" label="篩選" severity="primary" class="p-button-sm m-2" autofocus @click="search"/>
@@ -70,7 +70,7 @@
             </template>
         </DataView>
     </div>
-    <Paginator :rows="50" :totalRecords="total" :rowsPerPageOptions="[50, 100]" @page="selectPage"></Paginator>
+    <Paginator :rows="limit" :totalRecords="total" :rowsPerPageOptions="[50, 100]" @page="selectPage"></Paginator>
 </template>
 <script setup>
 import { ref, onMounted } from 'vue'
@@ -82,10 +82,12 @@ import { getSpecies } from '../../service/Species'
 import { getPerchMounts } from '../../service/Perchmounts'
 import { getVideoEndpoint } from '../../service/utils/video'
 import Dropdown from 'primevue/dropdown'
+import moment from 'moment'
 
 const layout = ref('grid');
 
 const total = ref(0)
+const limit = ref(50)
 
 const members = ref([])
 const species = ref([])
@@ -139,22 +141,28 @@ function search() {
 }
 
 
-function searchMedia(offset = 0, limit = 50) {
+function searchMedia(offset = 0) {
 
-    var taxonOrder = mediafilter.value.taxonOrder
-    var perchMountID = mediafilter.value.perchMountID
-    var behaviorID = mediafilter.value.behaviorID
-    var memberID = mediafilter.value.memberID
+    if (!mediafilter.value.dateRange) {
+        mediafilter.value.dateRange = [null, null]
+    }
+
+    var taxonOrder = (mediafilter.value.taxonOrder) ? mediafilter.value.taxonOrder.code : null
+    var perchMountID = (mediafilter.value.perchMountID) ? mediafilter.value.perchMountID.code : null
+    var behaviorID = (mediafilter.value.behaviorID) ? mediafilter.value.behaviorID.code : null
+    var memberID = (mediafilter.value.memberID) ? mediafilter.value.memberID.code : null
+    var from = (mediafilter.value.dateRange[0]) ? moment(mediafilter.value.dateRange[0]).toISOString() : null
+    var to = (mediafilter.value.dateRange[1]) ? moment(mediafilter.value.dateRange[1]).toISOString() : null
 
     getMediaByFeature(
-        (taxonOrder) ? taxonOrder.code : null,
-        (perchMountID) ? perchMountID.code : null,
-        (behaviorID) ? behaviorID.code : null,
-        (memberID) ? memberID.code : null,
-        mediafilter.value.dateRange[0],
-        mediafilter.value.dateRange[1],
+        taxonOrder,
+        perchMountID,
+        behaviorID,
+        memberID,
+        from,
+        to,
         offset,
-        limit,
+        limit.value,
     ).then(data => {
         media.value = data.media
         total.value = data.total
@@ -164,7 +172,8 @@ function searchMedia(offset = 0, limit = 50) {
 
 
 function selectPage(state) {
-    // console.log(state)
+    limit.value = state.rows
+    searchMedia(state.first)
 }
 
 </script>
