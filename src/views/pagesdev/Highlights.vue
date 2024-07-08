@@ -46,7 +46,7 @@
                     <div class="card m-3">
                         <div class="grid grid-nogutter">
                             <div class="col-6 text-left">
-
+                                {{ defineMediumtitle(slotProps.data) }}
                             </div>
                             <div class="col-6 text-right">
                                 <Button icon="pi pi-download" @click="downloadMeida(slotProps.data.s3_path)"
@@ -61,6 +61,16 @@
                                 width="100%" loading="lazy" controls></video>
                             </div>
                         </div>
+                        <Panel :header="slotProps.data.medium_id" class="mt-3" toggleable collapsed>
+                            <p class="m-0">
+                                計畫：{{ slotProps.data.project_name }}<br>
+                                棲架：{{ slotProps.data.perch_mount_name }}<br>
+                                拍攝時間：{{ slotProps.data.medium_datetime }}<br>
+                                精選人：{{ membersMap[slotProps.data.featured_by] }}<br>
+                                NAS Path：{{ slotProps.data.path }}<br>
+                                S3 Path：{{ slotProps.data.s3_path }}
+                            </p>
+                        </Panel>
                     </div>
                 </div>
 
@@ -86,11 +96,11 @@ const layout = ref('grid');
 const total = ref(0)
 const limit = ref(50)
 
-const members = ref([])
-const species = ref([])
 const perchMounts = ref([])
-const behaviors = ref([])
+const behaviorsMap = ref({})
+const membersMap = ref({})
 const media = ref([])
+const featuredSpecies = ref([])
 
 const speciesOptions = ref([])
 const perchMountOptions = ref([])
@@ -112,6 +122,7 @@ onMounted(() => {
 function initOptions() {
     getMembers().then(data => {
         findOptions(memberOptions, "first_name", "member_id", data.members)
+        findMap(membersMap, "member_id", "first_name", data.members)
     })
     getSpecies().then(data => {
         findOptions(speciesOptions, "chinese_common_name", "taxon_order", data.species)
@@ -121,6 +132,7 @@ function initOptions() {
     })
     getBehaviors().then(data => {
         findOptions(behaviorOptions, "chinese_name", "behavior_id", data.behaviors)
+        findMap(behaviorsMap, "behavior_id", "chinese_name", data.behaviors)
     })
 }
 
@@ -132,6 +144,12 @@ function findOptions(options, nameColumnName, codeColumnName, data) {
 
 }
 
+function findMap(map, keyColumnName, valueColumnName, data) {
+    map.value = {}
+    for (const row of data) {
+        map.value[row[keyColumnName]] = row[valueColumnName]
+    }
+}
 
 function search() {
     searchMedia()
@@ -163,6 +181,7 @@ function searchMedia(offset = 0) {
     ).then(data => {
         media.value = data.media
         total.value = data.total
+        featuredSpecies.value = data.species
     })
 
 }
@@ -175,6 +194,17 @@ function selectPage(state) {
 
 function downloadMeida(url) {
     window.open(url, '_blank')
+}
+
+function defineMediumtitle(medium) {
+
+    const behaviorName = behaviorsMap.value[medium.featured_behavior]
+
+    if (!medium.individuals.length) {
+        return behaviorName
+    }
+
+    return `${behaviorName} 的 ${featuredSpecies.value[medium.individuals[0].taxon_order_by_human].chinese_common_name}`
 }
 
 </script>

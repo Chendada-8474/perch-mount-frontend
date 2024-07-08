@@ -41,6 +41,8 @@ export function getMediaByFeature(
     var endPoint = new URL(`${window.BACKEND_HOST}/media/`)
     var params = new URLSearchParams()
 
+    params.append("featured", "true")
+
     params.append("limit", limit)
     params.append("offset", offset)
 
