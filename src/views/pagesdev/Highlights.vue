@@ -31,15 +31,10 @@
         <DataView :value="media" :layout="layout">
             <template #header>
                 <div class="grid grid-nogutter">
-                    <div class="col-6 text-left"></div>
-                    <div class="col-6 flex flex-row-reverse flex-wrap">
-                        <DataViewLayoutOptions v-model="layout" class="m-1"/>
-                    </div>
+                    <div class="col-6 text-left">搜尋結果</div>
                 </div>
             </template>
 
-            <template #list="slotProps">
-            </template>
 
             <template #grid="slotProps">
                 <div class="col-12 md:col-4">
