@@ -240,7 +240,6 @@ function searchClicked() {
         toast.add({ severity: 'warn', summary: '搜尋失敗', detail: '請至少輸入一個搜尋條件', life: 3000 })
         return
     }
-    console.log(dateToISOString(conditions.value.startTime))
     dataExport(
         conditions.value.projects,
         conditions.value.perchMounts,
