@@ -63,6 +63,7 @@
                 <Column field="prey" header="prey"></Column>
                 <Column field="prey_name" header="prey_name"></Column>
                 <Column field="ring_number" header="ring_number"></Column>
+                <Column field="is_image" header="is_image"></Column>
                 <Column field="xmax" header="xmax"></Column>
                 <Column field="xmin" header="xmin"></Column>
                 <Column field="ymax" header="ymax"></Column>
@@ -252,6 +253,7 @@ function searchClicked() {
         true,
     ).then(data => {
         previewData.value = data.data
+        console.log(data.data)
     })
 }
 
