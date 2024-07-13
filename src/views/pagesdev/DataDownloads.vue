@@ -253,7 +253,6 @@ function searchClicked() {
         true,
     ).then(data => {
         previewData.value = data.data
-        console.log(data.data)
     })
 }
 
