@@ -63,6 +63,7 @@
                 <Column field="prey" header="prey"></Column>
                 <Column field="prey_name" header="prey_name"></Column>
                 <Column field="ring_number" header="ring_number"></Column>
+                <Column field="is_image" header="is_image"></Column>
                 <Column field="xmax" header="xmax"></Column>
                 <Column field="xmin" header="xmin"></Column>
                 <Column field="ymax" header="ymax"></Column>
@@ -240,7 +241,6 @@ function searchClicked() {
         toast.add({ severity: 'warn', summary: '搜尋失敗', detail: '請至少輸入一個搜尋條件', life: 3000 })
         return
     }
-    console.log(dateToISOString(conditions.value.startTime))
     dataExport(
         conditions.value.projects,
         conditions.value.perchMounts,
