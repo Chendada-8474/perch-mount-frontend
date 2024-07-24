@@ -191,7 +191,10 @@
         </DataTable>
     </div>
 
+    <div class="card">
+        <h5>Month</h5>
 
+    </div>
 
     <Dialog v-model:visible="perchMountEditVisible" modal header="Edit Profile" :style="{ width: '50rem' }">
         <template #header>
@@ -220,7 +223,7 @@ import { useToast } from 'primevue/usetoast'
 import Location from '../../components/Location.vue'
 import PerchMountEditer from '../../components/PerchMountEditer.vue'
 
-import { getPerchMountByID, getMediaCount, updatePerchMountByID, cancelClaimPerchMount } from '../../service/PerchMounts'
+import { getPerchMountByID, getMediaCount, updatePerchMountByID, cancelClaimPerchMount, getMonthlyPendingByPerchMountID } from '../../service/PerchMounts'
 import { getSections } from '../../service/Sections'
 
 import { me } from '../../service/Me'
@@ -243,6 +246,11 @@ const mediaCount = ref({
     "detected": {},
     "media": {},
     "prey": {},
+})
+
+const monthlyPending = ref({
+    "empty_counts": {},
+    "detected_counts": {}
 })
 
 const numberEmpty = ref(0)
@@ -294,6 +302,9 @@ function refresh() {
             numberMedia.value += count
         }
         progressing.value = Math.round(100 * (numberMedia.value / (numberDetected.value + numberEmpty.value + numberMedia.value)))
+    })
+    getMonthlyPendingByPerchMountID(route.params.perch_mount_id).then(data => {
+        monthlyPending.value = data.counts
     })
 }
 

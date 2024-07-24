@@ -57,3 +57,9 @@ export function cancelClaimPerchMount(perchMountID) {
     var endPoint = new URL(`${window.BACKEND_HOST}/perch_mounts/${perchMountID}/`)
     return fetchWithloginCheck(endPoint.href, "PATCH", { claim_by: null })
 }
+
+
+export function getMonthlyPendingByPerchMountID(perchMountID) {
+    var endPoint = new URL(`${window.BACKEND_HOST}/perch_mounts/${perchMountID}/monthly_pending/`)
+    return fetchWithloginCheck(endPoint.href, "GET")
+}
