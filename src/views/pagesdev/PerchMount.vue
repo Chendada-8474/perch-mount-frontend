@@ -192,8 +192,45 @@
     </div>
 
     <div class="card">
-        <h5>Month</h5>
+        <h5>Monthly</h5>
+        <div class="grid">
+            <div class="col">
+                <h6>待空拍檢查</h6>
 
+                <DataTable :value="monthlyEmptyCounts">
+                    <Column header="年月">
+                        <template #body="slotProps">
+                            {{ slotProps.data.year }}-{{ toStrMonth(slotProps.data.month) }}
+                        </template>
+                    </Column>
+                    <Column>
+                        <template #body="slotProps">
+                            <RouterLink :to="emptyCheckPerchMountUrl(perchMount.perch_mount_id, year, month)">
+                                <Button :label="slotProps.data.count" class="p-button-secondary p-button-text mr-2 mb-2" />
+                            </RouterLink>
+                        </template>
+                    </Column>
+                </DataTable>
+            </div>
+            <div class="col">
+                <h6>待物種檢視</h6>
+                <DataTable :value="monthlyDetectedCounts">
+                    <Column header="年月">
+                        <template #body="slotProps">
+                            {{ slotProps.data.year }}-{{ toStrMonth(slotProps.data.month) }}
+                        </template>
+                    </Column>
+                    <Column>
+                        <template #body="slotProps">
+                            <RouterLink :to="reviewPerchMountUrl(perchMount.perch_mount_id, year, month)">
+                                <Button :label="slotProps.data.count" class="p-button-secondary p-button-text mr-2 mb-2" />
+                            </RouterLink>
+                        </template>
+                    </Column>
+                </DataTable>
+
+            </div>
+        </div>
     </div>
 
     <Dialog v-model:visible="perchMountEditVisible" modal header="Edit Profile" :style="{ width: '50rem' }">
@@ -217,6 +254,7 @@
 
 
 <script setup>
+import moment from 'moment'
 import { ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
@@ -227,6 +265,8 @@ import { getPerchMountByID, getMediaCount, updatePerchMountByID, cancelClaimPerc
 import { getSections } from '../../service/Sections'
 
 import { me } from '../../service/Me'
+
+
 
 
 const route = useRoute()
@@ -248,10 +288,8 @@ const mediaCount = ref({
     "prey": {},
 })
 
-const monthlyPending = ref({
-    "empty_counts": {},
-    "detected_counts": {}
-})
+const monthlyEmptyCounts = ref([]);
+const monthlyDetectedCounts = ref([])
 
 const numberEmpty = ref(0)
 const numberDetected = ref(0)
@@ -304,7 +342,8 @@ function refresh() {
         progressing.value = Math.round(100 * (numberMedia.value / (numberDetected.value + numberEmpty.value + numberMedia.value)))
     })
     getMonthlyPendingByPerchMountID(route.params.perch_mount_id).then(data => {
-        monthlyPending.value = data.counts
+        monthlyEmptyCounts.value = data.empty_counts
+        monthlyDetectedCounts.value = data.detected_counts
     })
 }
 
@@ -380,6 +419,14 @@ function emptyCheckPerchMountUrl(perchMountID) {
     return `/empty_check?perch_mount=${perchMountID}`
 }
 
+function monthlyReviewPerchMountUrl(perchMonthID, year, month) {
+    `/review?perch_mount=${perchMonthID}&${datetimeRangeParameter(year, month)}`
+}
+
+function monthlyEmptyCheckPerchMountUrl(perchMonthID, year, month) {
+    `/empty_check?perch_mount=${perchMonthID}&${datetimeRangeParameter(year, month)}`
+}
+
 function cancleClaim() {
     cancelClaimPerchMount(perchMount.value.perch_mount_id)
         .then(data => {
@@ -390,6 +437,23 @@ function cancleClaim() {
             toast.add({ severity: 'error', summary: '取消失敗', life: 3000 });
         })
 }
+
+function toStrMonth(month) {
+    var strMonth = month.toString()
+    if (month < 10) {
+        strMonth = `0${strMonth}`
+    }
+    return strMonth
+}
+
+function datetimeRangeParameter(year, month) {
+    var start = moment(`${year}-${toStrMonth(month)}-01`).add(8, "hour")
+    var end = moment(`${year}-${toStrMonth(month)}-01`).add(8, "hour").add(1, "month")
+    var range = `datetime_from=${start.toISOString()}&datetime_to=${end.toISOString()}`
+    return range
+}
+
+datetimeRangeParameter(2024, 7)
 
 </script>
 
