@@ -1,6 +1,13 @@
 import { fetchWithloginCheck } from "./utils/api"
 
-export function getEmptyMedia(perchMountID = null, sectionID = null, offset = null, limit = null) {
+export function getEmptyMedia(
+    perchMountID = null,
+    sectionID = null,
+    datetimeFrom = null,
+    datetimeTo = null,
+    offset = null,
+    limit = null,
+) {
 
     var endPoint = new URL(`${window.BACKEND_HOST}/empty_media/`)
     var params = new URLSearchParams()
@@ -13,6 +20,15 @@ export function getEmptyMedia(perchMountID = null, sectionID = null, offset = nu
     if (perchMountID != null) {
         params.append("perch_mount_id", perchMountID)
     }
+
+    if (datetimeFrom != null) {
+        params.append("datetime_from", datetimeFrom)
+    }
+
+    if (datetimeTo != null) {
+        params.append("datetime_to", datetimeTo)
+    }
+
     if (offset != null) {
         params.append("offset", offset)
     }
@@ -31,3 +47,4 @@ export function getEmptyMediumByID(emptyMediumID) {
     var endPoint = new URL(`${window.BACKEND_HOST}/empty_media/${emptyMediumID}/`)
     return fetchWithloginCheck(endPoint.href, "GET")
 }
+
