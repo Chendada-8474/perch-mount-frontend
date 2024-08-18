@@ -230,6 +230,22 @@
                 </DataTable>
 
             </div>
+            <div class="col">
+                <h6>已完成</h6>
+                <DataTable :value="monthlyCompletedCounts">
+                    <Column header="年月">
+                        <template #body="slotProps">
+                            {{ slotProps.data.year }}-{{ toStrMonth(slotProps.data.month) }}
+                        </template>
+                    </Column>
+                    <Column>
+                        <template #body="slotProps">
+                            {{ slotProps.data.count }}
+                        </template>
+                    </Column>
+                </DataTable>
+
+            </div>
         </div>
     </div>
 
@@ -290,6 +306,7 @@ const mediaCount = ref({
 
 const monthlyEmptyCounts = ref([]);
 const monthlyDetectedCounts = ref([])
+const monthlyCompletedCounts = ref([])
 
 const numberEmpty = ref(0)
 const numberDetected = ref(0)
@@ -344,6 +361,7 @@ function refresh() {
     getMonthlyPendingByPerchMountID(route.params.perch_mount_id).then(data => {
         monthlyEmptyCounts.value = data.empty_counts
         monthlyDetectedCounts.value = data.detected_counts
+        monthlyCompletedCounts.value = data.completed_counts
     })
 }
 
