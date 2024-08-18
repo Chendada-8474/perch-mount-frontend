@@ -205,7 +205,7 @@
                     </Column>
                     <Column>
                         <template #body="slotProps">
-                            <RouterLink :to="emptyCheckPerchMountUrl(perchMount.perch_mount_id, year, month)">
+                            <RouterLink :to="monthlyEmptyCheckPerchMountUrl(perchMount.perch_mount_id, slotProps.data.year, slotProps.data.month)">
                                 <Button :label="slotProps.data.count" class="p-button-secondary p-button-text mr-2 mb-2" />
                             </RouterLink>
                         </template>
@@ -222,7 +222,7 @@
                     </Column>
                     <Column>
                         <template #body="slotProps">
-                            <RouterLink :to="reviewPerchMountUrl(perchMount.perch_mount_id, year, month)">
+                            <RouterLink :to="monthlyReviewPerchMountUrl(perchMount.perch_mount_id, slotProps.data.year, slotProps.data.month)">
                                 <Button :label="slotProps.data.count" class="p-button-secondary p-button-text mr-2 mb-2" />
                             </RouterLink>
                         </template>
@@ -420,11 +420,12 @@ function emptyCheckPerchMountUrl(perchMountID) {
 }
 
 function monthlyReviewPerchMountUrl(perchMonthID, year, month) {
-    `/review?perch_mount=${perchMonthID}&${datetimeRangeParameter(year, month)}`
+    return `/review?perch_mount=${perchMonthID}&${datetimeRangeParameter(year, month)}`
 }
 
 function monthlyEmptyCheckPerchMountUrl(perchMonthID, year, month) {
-    `/empty_check?perch_mount=${perchMonthID}&${datetimeRangeParameter(year, month)}`
+    console.log(perchMonthID, year, month)
+    return `/empty_check?perch_mount=${perchMonthID}&${datetimeRangeParameter(year, month)}`
 }
 
 function cancleClaim() {
