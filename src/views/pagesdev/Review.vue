@@ -227,6 +227,8 @@ function refresh() {
     getDetectedMedia(
         url.searchParams.get('perch_mount'),
         url.searchParams.get('section'),
+        url.searchParams.get('datetime_from'),
+        url.searchParams.get('datetime_to'),
         url.searchParams.get('offset'),
         url.searchParams.get('limit'),
     ).then(data => {
