@@ -192,62 +192,28 @@
     </div>
 
     <div class="card">
-        <h5>Monthly</h5>
-        <div class="grid">
-            <div class="col">
-                <h6>待空拍檢查</h6>
+        <h5>年月計算</h5>
 
-                <DataTable :value="monthlyEmptyCounts">
-                    <Column header="年月">
-                        <template #body="slotProps">
-                            {{ slotProps.data.year }}-{{ toStrMonth(slotProps.data.month) }}
-                        </template>
-                    </Column>
-                    <Column>
-                        <template #body="slotProps">
-                            <RouterLink :to="monthlyEmptyCheckPerchMountUrl(perchMount.perch_mount_id, slotProps.data.year, slotProps.data.month)">
-                                <Button :label="slotProps.data.count" class="p-button-secondary p-button-text mr-2 mb-2" />
-                            </RouterLink>
-                        </template>
-                    </Column>
-                </DataTable>
-            </div>
-            <div class="col">
-                <h6>待物種檢視</h6>
-                <DataTable :value="monthlyDetectedCounts">
-                    <Column header="年月">
-                        <template #body="slotProps">
-                            {{ slotProps.data.year }}-{{ toStrMonth(slotProps.data.month) }}
-                        </template>
-                    </Column>
-                    <Column>
-                        <template #body="slotProps">
-                            <RouterLink :to="monthlyReviewPerchMountUrl(perchMount.perch_mount_id, slotProps.data.year, slotProps.data.month)">
-                                <Button :label="slotProps.data.count" class="p-button-secondary p-button-text mr-2 mb-2" />
-                            </RouterLink>
-                        </template>
-                    </Column>
-                </DataTable>
-
-            </div>
-            <div class="col">
-                <h6>已完成</h6>
-                <DataTable :value="monthlyCompletedCounts">
-                    <Column header="年月">
-                        <template #body="slotProps">
-                            {{ slotProps.data.year }}-{{ toStrMonth(slotProps.data.month) }}
-                        </template>
-                    </Column>
-                    <Column>
-                        <template #body="slotProps">
-                            {{ slotProps.data.count }}
-                        </template>
-                    </Column>
-                </DataTable>
-
-            </div>
-        </div>
+        <DataTable :value="monthlyCounts">
+            <Column field="yearMonth" header="年月"></Column>
+            <Column header="待檢查空拍">
+                <template #body="slotProps">
+                    <RouterLink :to="monthlyEmptyCheckPerchMountUrl(perchMount.perch_mount_id, slotProps.data.year, slotProps.data.month)">
+                        <Button :label="slotProps.data.emptyCounts" class="p-button-secondary p-button-text mr-2 mb-2" />
+                    </RouterLink>
+                </template>
+            </Column>
+            <Column header="待物種檢視">
+                <template #body="slotProps">
+                    <RouterLink :to="monthlyReviewPerchMountUrl(perchMount.perch_mount_id, slotProps.data.year, slotProps.data.month)">
+                        <Button :label="slotProps.data.detectedCounts" class="p-button-secondary p-button-text mr-2 mb-2" />
+                    </RouterLink>
+                </template>
+            </Column>
+            <Column field="compeletedCounts" header="已完成"></Column>
+        </DataTable>
     </div>
+
 
     <Dialog v-model:visible="perchMountEditVisible" modal header="Edit Profile" :style="{ width: '50rem' }">
         <template #header>
@@ -277,7 +243,14 @@ import { useToast } from 'primevue/usetoast'
 import Location from '../../components/Location.vue'
 import PerchMountEditer from '../../components/PerchMountEditer.vue'
 
-import { getPerchMountByID, getMediaCount, updatePerchMountByID, cancelClaimPerchMount, getMonthlyPendingByPerchMountID } from '../../service/PerchMounts'
+import {
+    getPerchMountByID,
+    getMediaCount,
+    updatePerchMountByID,
+    cancelClaimPerchMount,
+    getMonthlyPendingByPerchMountID,
+    mergeCountTables,
+} from '../../service/PerchMounts'
 import { getSections } from '../../service/Sections'
 
 import { me } from '../../service/Me'
@@ -307,6 +280,8 @@ const mediaCount = ref({
 const monthlyEmptyCounts = ref([]);
 const monthlyDetectedCounts = ref([])
 const monthlyCompletedCounts = ref([])
+const monthlyCounts = ref([])
+
 
 const numberEmpty = ref(0)
 const numberDetected = ref(0)
@@ -362,6 +337,7 @@ function refresh() {
         monthlyEmptyCounts.value = data.empty_counts
         monthlyDetectedCounts.value = data.detected_counts
         monthlyCompletedCounts.value = data.completed_counts
+        monthlyCounts.value = mergeCountTables(data.empty_counts, data.detected_counts, data.completed_counts)
     })
 }
 
