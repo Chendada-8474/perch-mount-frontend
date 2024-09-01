@@ -165,19 +165,20 @@ import { getProjects } from '../../service/Projects';
 import { getPerchMounts } from '../../service/PerchMounts';
 import { getSpecies } from '../../service/Species';
 import { dataExport } from '../../service/DataExport';
-import { useCurrentUser } from '../../stores/currnetUser';
 import { getExportHistoriesByExportor } from '../../service/DataExport';
-import { storeToRefs } from 'pinia'
+import { me } from '../../service/Me'
 
 const toast = useToast()
 
 
-const currentUser = ref()
+const currentUser = ref({})
 
 onBeforeMount(() => {
-    currentUser.value = storeToRefs(useCurrentUser())
-    getExportHistoriesByExportor(currentUser.value.user_id).then(data => {
-        exportHistories.value = data.export_histories
+    me().then(data => {
+        currentUser.value = data
+        getExportHistoriesByExportor(currentUser.value.user_id).then(data => {
+            exportHistories.value = data.export_histories
+        })
     })
 })
 

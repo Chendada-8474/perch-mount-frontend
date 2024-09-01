@@ -5,21 +5,23 @@
     </div>
 </template>
 <script setup>
-import { ref, onBeforeMount } from 'vue'
-import { storeToRefs } from 'pinia'
+import { ref } from 'vue'
 
-import { useCurrentUser } from '../../stores/currnetUser';
 import { getMemberByID } from '../../service/Members'
+import { me } from '../../service/Me'
 
-
-const currentUser = ref()
 const member = ref({})
+const currentUser = ref({})
 
-onBeforeMount(() => {
-    currentUser.value = storeToRefs(useCurrentUser())
+
+
+me().then(data => {
+    currentUser.value = data
     getMemberByID(currentUser.value.user_id).then(data => {
         member.value = data
     })
 })
+
+
 
 </script>

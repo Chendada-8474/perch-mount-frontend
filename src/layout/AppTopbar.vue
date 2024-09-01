@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast'
 
 import { signOut } from '../service/utils/login'
-import { useCurrentUser } from '../stores/currnetUser';
+import { me } from '../service/Me'
 
 const { layoutConfig, onMenuToggle } = useLayout();
 
@@ -13,9 +13,12 @@ const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
 const router = useRouter();
 const toast = useToast()
+const currentUser = ref({})
 
+me().then(data => {
+    currentUser.value = data
+})
 
-const currentUser = useCurrentUser()
 
 onMounted(() => {
     bindOutsideClickListener();
