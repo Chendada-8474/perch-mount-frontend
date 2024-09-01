@@ -176,6 +176,9 @@ const currentUser = ref()
 
 onBeforeMount(() => {
     currentUser.value = storeToRefs(useCurrentUser())
+    getExportHistoriesByExportor(currentUser.value.user_id).then(data => {
+        exportHistories.value = data.export_histories
+    })
 })
 
 
@@ -326,13 +329,6 @@ function isAnyCondition() {
 function dateToISOString(date) {
     return moment(date).add(8, 'hours').toISOString()
 }
-
-
-onMounted(() => {
-    getExportHistoriesByExportor(currentUser.value.user_id).then(data => {
-        exportHistories.value = data.export_histories
-    })
-})
 
 function getExportDataUrl(fileName) {
     return `${window.S3_HOST}/${window.DATA_EXPORT_BUCKET}/${fileName}`

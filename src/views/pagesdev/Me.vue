@@ -5,7 +5,7 @@
     </div>
 </template>
 <script setup>
-import { ref, onBeforeMount, onMounted } from 'vue'
+import { ref, onBeforeMount } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import { useCurrentUser } from '../../stores/currnetUser';
@@ -17,15 +17,9 @@ const member = ref({})
 
 onBeforeMount(() => {
     currentUser.value = storeToRefs(useCurrentUser())
-})
-
-onMounted(() => {
     getMemberByID(currentUser.value.user_id).then(data => {
         member.value = data
+    })
 })
-
-})
-
-
 
 </script>
