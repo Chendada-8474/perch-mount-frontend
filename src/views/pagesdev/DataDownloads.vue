@@ -158,7 +158,7 @@
 </template>
 <script setup>
 import moment from 'moment';
-import {ref, onMounted} from 'vue'
+import {ref, onMounted, onBeforeMount} from 'vue'
 import { useToast } from 'primevue/usetoast';
 
 import { getProjects } from '../../service/Projects';
@@ -171,7 +171,14 @@ import { storeToRefs } from 'pinia'
 
 const toast = useToast()
 
-const currentUser = storeToRefs(useCurrentUser())
+
+const currentUser = ref()
+
+onBeforeMount(() => {
+    currentUser.value = storeToRefs(useCurrentUser())
+})
+
+
 const exportHistories = ref([])
 
 const perchMountOptions = ref([])
@@ -322,7 +329,7 @@ function dateToISOString(date) {
 
 
 onMounted(() => {
-    getExportHistoriesByExportor(currentUser.user_id.value).then(data => {
+    getExportHistoriesByExportor(currentUser.value.user_id).then(data => {
         exportHistories.value = data.export_histories
     })
 })
