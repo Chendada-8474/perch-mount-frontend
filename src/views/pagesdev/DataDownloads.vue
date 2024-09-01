@@ -1,37 +1,55 @@
 <template>
-    <div className="card">
-        <h5>資料下載</h5>
-        <div class="flex flex-wrap gap-2">
-            <p>計畫：</p>
-            <Badge v-for="project of editor.projects" :value="project.name" severity="info"></Badge>
+    <div class="grid">
+        <div class="col-8">
+            <div className="card">
+                <h5>資料下載</h5>
+                <div class="flex flex-wrap gap-2">
+                    <p>計畫：</p>
+                    <Badge v-for="project of editor.projects" :value="project.name" severity="info"></Badge>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <p>棲架：</p>
+                    <Badge v-for="perchMount of editor.perchMounts" :value="perchMount.name"  severity="info"></Badge>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <p>時間：</p>
+                    <Badge :value="displayDate(editor.startTime)"  severity="info"></Badge>
+                    <p>~</p>
+                    <Badge :value="displayDate(editor.endTime)"  severity="info"></Badge>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <p>獵物：</p>
+                    <Badge v-if="editor.prey" value="只要有獵物的資料" severity="info"></Badge>
+                    <Badge v-else value="不篩選獵物" severity="info"></Badge>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <p>物種：</p>
+                    <Badge v-for="species of editor.taxonOrdersByHuman" :value="species.name"  severity="info"></Badge>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <p>AI 物種：</p>
+                    <Badge v-for="species of editor.taxonOrdersByAI" :value="species.name"  severity="info"></Badge>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <p>未 Review 資料：</p>
+                    <Badge v-if="editor.unreviewedData" value="連沒 Review 過的資料都要" severity="info"></Badge>
+                    <Badge v-else value="只要有 Review 過的" severity="info"></Badge>
+                </div>
+            </div>
+
         </div>
-        <div class="flex flex-wrap gap-2">
-            <p>棲架：</p>
-            <Badge v-for="perchMount of editor.perchMounts" :value="perchMount.name"  severity="info"></Badge>
-        </div>
-        <div class="flex flex-wrap gap-2">
-            <p>時間：</p>
-            <Badge :value="displayDate(editor.startTime)"  severity="info"></Badge>
-            <p>~</p>
-            <Badge :value="displayDate(editor.endTime)"  severity="info"></Badge>
-        </div>
-        <div class="flex flex-wrap gap-2">
-            <p>獵物：</p>
-            <Badge v-if="editor.prey" value="只要有獵物的資料" severity="info"></Badge>
-            <Badge v-else value="不篩選獵物" severity="info"></Badge>
-        </div>
-        <div class="flex flex-wrap gap-2">
-            <p>物種：</p>
-            <Badge v-for="species of editor.taxonOrdersByHuman" :value="species.name"  severity="info"></Badge>
-        </div>
-        <div class="flex flex-wrap gap-2">
-            <p>AI 物種：</p>
-            <Badge v-for="species of editor.taxonOrdersByAI" :value="species.name"  severity="info"></Badge>
-        </div>
-        <div class="flex flex-wrap gap-2">
-            <p>未 Review 資料：</p>
-            <Badge v-if="editor.unreviewedData" value="連沒 Review 過的資料都要" severity="info"></Badge>
-            <Badge v-else value="只要有 Review 過的" severity="info"></Badge>
+        <div class="col-4">
+            <div class="card h-full">
+                <h5>你的已下載資料</h5>
+                <DataTable :value="exportHistories">
+                    <Column field="file_name" header="檔案名稱">
+                        <template #body="slotProps">
+                            <a :href="getExportDataUrl(slotProps.data.file_name)" target="_blank">{{ slotProps.data.file_name }}</a>
+                        </template>
+                    </Column>
+                    <Column field="create_time" header="輸出時間"></Column>
+                </DataTable>
+            </div>
         </div>
     </div>
 
@@ -147,8 +165,14 @@ import { getProjects } from '../../service/Projects';
 import { getPerchMounts } from '../../service/PerchMounts';
 import { getSpecies } from '../../service/Species';
 import { dataExport } from '../../service/DataExport';
+import { useCurrentUser } from '../../stores/currnetUser';
+import { getExportHistoriesByExportor } from '../../service/DataExport';
+import { storeToRefs } from 'pinia'
 
 const toast = useToast()
+
+const currentUser = storeToRefs(useCurrentUser())
+const exportHistories = ref([])
 
 const perchMountOptions = ref([])
 const projectOptions = ref([])
@@ -295,5 +319,17 @@ function isAnyCondition() {
 function dateToISOString(date) {
     return moment(date).add(8, 'hours').toISOString()
 }
+
+
+onMounted(() => {
+    getExportHistoriesByExportor(currentUser.user_id.value).then(data => {
+        exportHistories.value = data.export_histories
+    })
+})
+
+function getExportDataUrl(fileName) {
+    return `${window.S3_HOST}/${window.DATA_EXPORT_BUCKET}/${fileName}`
+}
+
 
 </script>
