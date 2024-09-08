@@ -177,13 +177,13 @@ getSectionByID(route.params.section_id).then((data) => {
     camera.value = data.camera
     breadcrumbItems.value[2].label = data.check_date
 })
-getDetectedMedia(null, route.params.section_id, null, 20000).then((data) => {
+getDetectedMedia(null, route.params.section_id, null, null, null, 20000).then((data) => {
     detectedMedia.value = data.media
     for (var medium of detectedMedia.value) {
         medium.medium_date = formatMediumDate(medium.medium_datetime)
     }
 })
-getEmptyMedia(null, route.params.section_id, null, 20000).then(data => {
+getEmptyMedia(null, route.params.section_id, null, null, null, 20000).then(data => {
     emptyMedia.value = data.media
     for (const medium of emptyMedia.value) {
         medium.medium_date = formatMediumDate(medium.medium_datetime)
