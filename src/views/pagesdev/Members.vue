@@ -83,12 +83,14 @@ import { useToast } from 'primevue/usetoast';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 
-import { useCurrentUser } from '../../stores/currnetUser';
 import { getMembers, addMember } from '../../service/Members'
 import { getPositions } from '../../service/Positions'
+import { me } from '../../service/Me'
 
-const currentUser = useCurrentUser()
 const toast = useToast()
+
+// const currentUser = useCurrentUser()
+const currentUser = ref({})
 
 const positionOptions = ref([])
 const members = ref(null)
@@ -111,6 +113,11 @@ getPositions().then((data) => {
     }
     positionOptions.value = options
 })
+
+me().then(data => {
+    currentUser.value = data
+})
+
 
 function refresh() {
     getMembers().then((data) => {
