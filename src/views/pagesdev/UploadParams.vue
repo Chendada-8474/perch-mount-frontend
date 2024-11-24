@@ -167,7 +167,7 @@ mount_type: ${mountTypeID}       # ${mountTypeName}
 note: ${params.note}
 valid: ${params.valid}
 operators: [${operators.join(', ')}]
-start_time: ${moment(params.startTime).toISOString()}`
+start_time: ${moment(params.startTime).format('YYYY-MM-DDTHH:mm:ss')}`
     return code
 }
 
