@@ -304,7 +304,7 @@ function openCheckModal() {
 function submit() {
     submitVisible.value = false
     mediaToSubmitFormat()
-    review(media.value).then(data => {
+    review({media: media.value, reviewer_id: currentUser.value.user_id}).then(data => {
         toast.add({ severity: 'success', summary: 'review 成功', life: 3000 })
         media.value = []
     }).catch(e => {

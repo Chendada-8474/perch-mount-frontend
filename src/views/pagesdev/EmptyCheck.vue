@@ -161,7 +161,7 @@ function submit() {
         medium.empty = !medium.selected
     }
 
-    emptyCheck({ media: media.value })
+    emptyCheck({ media: media.value, empty_checker_id: currentUser.value.user_id })
         .then((data) => {
             toast.add({ severity: 'success', summary: '資料已成功送出', life: 3000 })
             media.value = []
